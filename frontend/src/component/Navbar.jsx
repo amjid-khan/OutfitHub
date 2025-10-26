@@ -74,38 +74,69 @@ const Navbar = () => {
     navigate("/", { replace: true });
   };
 
-  return (
-    <div className="flex justify-between items-center px-6 py-3 bg-white shadow-md">
-      {/* Logo */}
-      <h1
-        onClick={() => navigate("/")}
-        className="text-2xl font-bold text-blue-600 cursor-pointer"
-      >
-        MyLogo
-      </h1>
+  if (user?.role === 'admin') {
+    return null;
+  }
 
-      {/* If NOT logged in */}
-      {!user ? (
-        <button
-          onClick={() => setShowForm(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+  return (
+    <div className="flex flex-col">
+      <div className="flex justify-between items-center px-6 py-3 bg-white shadow-md">
+        {/* Logo */}
+        <h1
+          onClick={() => navigate("/")}
+          className="text-2xl font-bold text-blue-600 cursor-pointer"
         >
-          Sign In
-        </button>
-      ) : (
-        // If Logged in
-        <div className="flex items-center gap-4">
-          <span className="font-medium text-gray-700">
-            👋 {user.name || "User"}
-          </span>
-          <button
-            onClick={handleLogout}
-            className="text-gray-600 hover:text-red-600 transition"
-          >
-            Logout
-          </button>
+          Shoes Store
+        </h1>
+
+        <div className="flex items-center gap-6">
+          {/* Navigation Menu */}
+          <nav className="hidden md:flex items-center gap-6">
+            <button onClick={() => navigate("/")} className="text-gray-600 hover:text-blue-600 transition">
+              Home
+            </button>
+            <button onClick={() => navigate("/products")} className="text-gray-600 hover:text-blue-600 transition">
+              Products
+            </button>
+            <button onClick={() => navigate("/categories")} className="text-gray-600 hover:text-blue-600 transition">
+              Categories
+            </button>
+            <button onClick={() => navigate("/cart")} className="text-gray-600 hover:text-blue-600 transition">
+              Cart
+            </button>
+          </nav>
+
+          {/* Auth Section */}
+          {!user ? (
+            <button
+              onClick={() => setShowForm(true)}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            >
+              Sign In
+            </button>
+          ) : (
+            <div className="flex items-center gap-4">
+              <span className="font-medium text-gray-700">
+                👋 {user.name || "User"}
+              </span>
+              <div className="flex items-center gap-4">
+                <button onClick={() => navigate("/orders")} className="text-gray-600 hover:text-blue-600 transition">
+                  My Orders
+                </button>
+                <button onClick={() => navigate("/profile")} className="text-gray-600 hover:text-blue-600 transition">
+                  Profile
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-600 hover:text-red-600 transition"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Form Modal */}
       {showForm && (
