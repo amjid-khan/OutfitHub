@@ -1,13 +1,26 @@
+// src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(false);
-    
-const API_URL = import.meta.env.VITE_API_BASE_URL
+  const [loading, setLoading] = useState(false);
+  const [initializing, setInitializing] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/auth`;
+
+  // ✅ Redirect based on role
+  const handleRedirect = (userData) => {
+    if (userData?.role === "admin") {
+      navigate("/admin/dashboard", { replace: true });
+    } else {
+      navigate("/", { replace: true });
+    }
+  };
 
   // ✅ Register User
   const register = async (formData) => {
@@ -19,15 +32,26 @@ const API_URL = import.meta.env.VITE_API_BASE_URL
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (res.ok) {
-        setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      } else {
+
+      if (!res.ok) {
         throw new Error(data.message || "Registration failed");
       }
+
+      if (!data._id || !data.name || !data.role) {
+        throw new Error("Invalid response from server");
+      }
+
+      // Store user data
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
+      
+      // Handle navigation based on role
+      handleRedirect(data);
+      
+      return data; // Return user data
     } catch (err) {
       console.error("Register error:", err.message);
-      alert(err.message);
+      throw err; // Rethrow to handle in Navbar
     } finally {
       setLoading(false);
     }
@@ -43,15 +67,26 @@ const API_URL = import.meta.env.VITE_API_BASE_URL
         body: JSON.stringify(credentials),
       });
       const data = await res.json();
-      if (res.ok) {
-        setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      } else {
+
+      if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
+
+      if (!data._id || !data.name || !data.role) {
+        throw new Error("Invalid response from server");
+      }
+
+      // Store user data
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
+      
+      // Handle navigation based on role
+      handleRedirect(data);
+      
+      return data; // Return user data
     } catch (err) {
       console.error("Login error:", err.message);
-      alert(err.message);
+      throw err; // Rethrow to handle in Navbar
     } finally {
       setLoading(false);
     }
@@ -61,21 +96,44 @@ const API_URL = import.meta.env.VITE_API_BASE_URL
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    navigate("/", { replace: true });
   };
 
-  // ✅ Load user from localStorage on refresh
+  // ✅ Stay logged in after refresh
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const userData = JSON.parse(storedUser);
+        if (userData && userData._id && userData.name && userData.role && userData.token) { // Validate user data
+          setUser(userData);
+        } else {
+          localStorage.removeItem("user"); // Clear invalid data
+        }
+      }
+    } catch (err) {
+      console.error("Error parsing stored user:", err);
+      localStorage.removeItem("user"); // Clear invalid data
+    }
+    finally {
+      // initialization finished (whether we found a user or not)
+      setInitializing(false);
     }
   }, []);
+
+  // ✅ Prevent going back after login (history block)
+  useEffect(() => {
+    if (user && (location.pathname === "/login" || location.pathname === "/register")) {
+      handleRedirect(user);
+    }
+  }, [user, location]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
         loading,
+        initializing,
         login,
         register,
         logout,
@@ -87,5 +145,5 @@ const API_URL = import.meta.env.VITE_API_BASE_URL
   );
 };
 
-// ✅ Custom hook for easier access
+// ✅ Custom Hook
 export const useAuth = () => useContext(AuthContext);
