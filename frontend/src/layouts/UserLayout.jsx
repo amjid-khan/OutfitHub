@@ -9,7 +9,7 @@ const UserLayout = () => {
       <Navbar />
 
       {/* Main Content */}
-      <main className="flex-grow container mx-auto px-4 py-6">
+      <main className="flex-grow container mx-auto px-4 py-2">
         <Outlet />
       </main>
 

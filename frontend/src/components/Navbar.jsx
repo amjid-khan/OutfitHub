@@ -13,7 +13,6 @@ import {
   Menu,
   Eye,
   EyeOff,
-  Tag,
 } from "lucide-react";
 
 const Navbar = () => {
@@ -68,24 +67,23 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-black text-white sticky top-0 z-40 shadow-lg">
+      <nav className="bg-white text-gray-900 sticky top-0 z-40 shadow-md">
         {/* Top Bar */}
-        <div className="border-b border-gray-800">
+        <div className="border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl blur-md opacity-50 group-hover:opacity-75 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-red-600 via-orange-500 to-yellow-500 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  <Tag className="w-6 h-6 sm:w-7 sm:h-7 text-white" strokeWidth={2.5} />
+                <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300 border-2 border-gray-900">
+                  <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={2.5} />
                 </div>
               </div>
               <div>
-                <span className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent group-hover:from-red-400 group-hover:via-orange-400 group-hover:to-yellow-400 transition-all duration-300">
-                  BLACK MART
+                <span className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-gray-900 group-hover:text-red-600 transition-all duration-300">
+                  SHOP<span className="text-red-600">MART</span>
                 </span>
-                <div className="text-xs text-gray-400 tracking-widest -mt-1 hidden sm:block group-hover:text-orange-500 transition-colors duration-300">
-                  DEALS & DISCOUNTS
+                <div className="text-xs text-gray-500 tracking-widest -mt-1 hidden sm:block group-hover:text-red-600 transition-colors duration-300">
+                  YOUR SHOPPING DESTINATION
                 </div>
               </div>
             </Link>
@@ -94,13 +92,13 @@ const Navbar = () => {
             <div className="hidden lg:flex items-center flex-1 max-w-md mx-8">
               <div className="relative w-full">
                 <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                   size={18}
                 />
                 <input
                   type="text"
-                  placeholder="Search..."
-                  className="w-full bg-gray-900 border border-gray-700 rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition"
+                  placeholder="Search products..."
+                  className="w-full bg-gray-50 border border-gray-300 rounded-full pl-10 pr-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
                 />
               </div>
             </div>
@@ -110,40 +108,40 @@ const Navbar = () => {
               {/* Wishlist - Hidden on small mobile */}
               <Link
                 to="/wishlist"
-                className="hidden sm:block relative p-2 hover:bg-gray-800 rounded-full transition"
+                className="hidden sm:block relative p-2 hover:bg-gray-100 rounded-full transition"
               >
-                <Heart size={20} className="text-gray-300" />
-                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                <Heart size={20} className="text-gray-700" />
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
                   0
                 </span>
               </Link>
 
               <Link
                 to="/cart"
-                className="relative p-2 hover:bg-gray-800 rounded-full transition"
+                className="relative p-2 hover:bg-gray-100 rounded-full transition"
               >
-                <ShoppingCart size={20} className="text-gray-300" />
-                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                <ShoppingCart size={20} className="text-gray-700" />
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
                   0
                 </span>
               </Link>
 
               {/* Divider */}
-              <div className="w-px h-6 bg-gray-700"></div>
+              <div className="w-px h-6 bg-gray-300"></div>
 
               {/* User Menu */}
               {isAuthenticated ? (
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-800 transition"
+                    className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                    <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                       {user.name.charAt(0).toUpperCase()}
                     </div>
                     <ChevronDown
                       size={14}
-                      className={`text-gray-400 transition-transform hidden sm:block ${
+                      className={`text-gray-600 transition-transform hidden sm:block ${
                         showUserMenu ? "rotate-180" : ""
                       }`}
                     />
@@ -151,16 +149,16 @@ const Navbar = () => {
 
                   {/* Dropdown Menu */}
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-gray-900 rounded-xl shadow-2xl border border-gray-700 py-1">
-                      <div className="px-3 py-2 border-b border-gray-700">
-                        <p className="text-xs text-gray-400">Signed in as</p>
-                        <p className="font-semibold text-sm text-white truncate">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-200 py-1">
+                      <div className="px-3 py-2 border-b border-gray-200">
+                        <p className="text-xs text-gray-500">Signed in as</p>
+                        <p className="font-semibold text-sm text-gray-900 truncate">
                           {user.name}
                         </p>
                       </div>
                       <Link
                         to="/my-orders"
-                        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-800 transition text-gray-300 hover:text-white text-sm"
+                        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 transition text-gray-700 hover:text-gray-900 text-sm"
                         onClick={() => setShowUserMenu(false)}
                       >
                         <Package size={16} />
@@ -171,7 +169,7 @@ const Navbar = () => {
                           logout();
                           setShowUserMenu(false);
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-red-900/30 transition text-red-500 text-sm"
+                        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-red-50 transition text-red-500 text-sm"
                       >
                         <LogOut size={16} />
                         <span>Logout</span>
@@ -182,7 +180,7 @@ const Navbar = () => {
               ) : (
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="flex items-center gap-2 text-gray-300 hover:text-white transition text-sm font-medium"
+                  className="flex items-center gap-2 text-gray-700 hover:text-red-600 transition text-sm font-medium"
                 >
                   <User size={18} />
                   <span className="hidden sm:inline">Sign In</span>
@@ -192,29 +190,29 @@ const Navbar = () => {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="lg:hidden p-2 hover:bg-gray-800 rounded-full transition ml-2"
+                className="lg:hidden p-2 hover:bg-gray-100 rounded-full transition ml-2"
               >
-                <Menu size={20} className="text-gray-300" />
+                <Menu size={20} className="text-gray-700" />
               </button>
             </div>
           </div>
         </div>
 
         {/* Desktop Menu Bar - Hidden on mobile */}
-        <div className="hidden lg:block bg-gray-900 border-t border-gray-800">
+        <div className="hidden lg:block bg-gray-50 border-t border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-center gap-1">
               <Link
                 to="/"
                 className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
                   isActive("/")
-                    ? "text-orange-500"
-                    : "text-gray-300 hover:text-orange-500"
+                    ? "text-red-600"
+                    : "text-gray-700 hover:text-red-600"
                 }`}
               >
                 <span>HOME</span>
                 <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-orange-500 transform transition ${
+                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
                     isActive("/") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                   }`}
                 ></div>
@@ -223,13 +221,13 @@ const Navbar = () => {
                 to="/products"
                 className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
                   isActive("/products")
-                    ? "text-orange-500"
-                    : "text-gray-300 hover:text-orange-500"
+                    ? "text-red-600"
+                    : "text-gray-700 hover:text-red-600"
                 }`}
               >
                 <span>NEW ARRIVALS</span>
                 <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-orange-500 transform transition ${
+                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
                     isActive("/products") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                   }`}
                 ></div>
@@ -238,13 +236,13 @@ const Navbar = () => {
                 to="/men"
                 className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
                   isActive("/men")
-                    ? "text-orange-500"
-                    : "text-gray-300 hover:text-orange-500"
+                    ? "text-red-600"
+                    : "text-gray-700 hover:text-red-600"
                 }`}
               >
                 <span>MEN</span>
                 <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-orange-500 transform transition ${
+                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
                     isActive("/men") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                   }`}
                 ></div>
@@ -253,13 +251,13 @@ const Navbar = () => {
                 to="/women"
                 className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
                   isActive("/women")
-                    ? "text-orange-500"
-                    : "text-gray-300 hover:text-orange-500"
+                    ? "text-red-600"
+                    : "text-gray-700 hover:text-red-600"
                 }`}
               >
                 <span>WOMEN</span>
                 <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-orange-500 transform transition ${
+                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
                     isActive("/women") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                   }`}
                 ></div>
@@ -268,13 +266,13 @@ const Navbar = () => {
                 to="/kids"
                 className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
                   isActive("/kids")
-                    ? "text-orange-500"
-                    : "text-gray-300 hover:text-orange-500"
+                    ? "text-red-600"
+                    : "text-gray-700 hover:text-red-600"
                 }`}
               >
                 <span>KIDS</span>
                 <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-orange-500 transform transition ${
+                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
                     isActive("/kids") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                   }`}
                 ></div>
@@ -283,15 +281,13 @@ const Navbar = () => {
                 to="/sale"
                 className={`px-5 py-3 text-sm font-bold transition whitespace-nowrap relative group ${
                   isActive("/sale")
-                    ? "text-orange-500"
-                    : ""
+                    ? "text-red-600"
+                    : "text-red-600"
                 }`}
               >
-                <span className={isActive("/sale") ? "text-orange-500" : "bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent"}>
-                  SALE
-                </span>
+                <span>SALE 🔥</span>
                 <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-orange-500 transform transition ${
+                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
                     isActive("/sale") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                   }`}
                 ></div>
@@ -302,14 +298,14 @@ const Navbar = () => {
 
         {/* Mobile Menu Dropdown */}
         {showMobileMenu && (
-          <div className="lg:hidden bg-gray-900 border-t border-gray-800 shadow-lg">
+          <div className="lg:hidden bg-white border-t border-gray-200 shadow-lg">
             <div className="px-4 py-2 space-y-1">
               <Link
                 to="/"
                 className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
                   isActive("/")
-                    ? "text-orange-500 bg-gray-800"
-                    : "text-gray-300 hover:text-orange-500 hover:bg-gray-800"
+                    ? "text-red-600 bg-red-50"
+                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setShowMobileMenu(false)}
               >
@@ -319,8 +315,8 @@ const Navbar = () => {
                 to="/products"
                 className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
                   isActive("/products")
-                    ? "text-orange-500 bg-gray-800"
-                    : "text-gray-300 hover:text-orange-500 hover:bg-gray-800"
+                    ? "text-red-600 bg-red-50"
+                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setShowMobileMenu(false)}
               >
@@ -330,8 +326,8 @@ const Navbar = () => {
                 to="/men"
                 className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
                   isActive("/men")
-                    ? "text-orange-500 bg-gray-800"
-                    : "text-gray-300 hover:text-orange-500 hover:bg-gray-800"
+                    ? "text-red-600 bg-red-50"
+                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setShowMobileMenu(false)}
               >
@@ -341,8 +337,8 @@ const Navbar = () => {
                 to="/women"
                 className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
                   isActive("/women")
-                    ? "text-orange-500 bg-gray-800"
-                    : "text-gray-300 hover:text-orange-500 hover:bg-gray-800"
+                    ? "text-red-600 bg-red-50"
+                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setShowMobileMenu(false)}
               >
@@ -352,8 +348,8 @@ const Navbar = () => {
                 to="/kids"
                 className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
                   isActive("/kids")
-                    ? "text-orange-500 bg-gray-800"
-                    : "text-gray-300 hover:text-orange-500 hover:bg-gray-800"
+                    ? "text-red-600 bg-red-50"
+                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setShowMobileMenu(false)}
               >
@@ -363,12 +359,12 @@ const Navbar = () => {
                 to="/sale"
                 className={`block px-4 py-3 rounded-lg text-sm font-bold transition ${
                   isActive("/sale")
-                    ? "text-orange-500 bg-gray-800"
-                    : "text-red-500 hover:bg-red-900/20"
+                    ? "text-red-600 bg-red-50"
+                    : "text-red-600 hover:bg-red-50"
                 }`}
                 onClick={() => setShowMobileMenu(false)}
               >
-                SALE
+                SALE 🔥
               </Link>
             </div>
           </div>
@@ -377,20 +373,20 @@ const Navbar = () => {
 
       {/* Login/Register Modal */}
       {isModalOpen && !isAuthenticated && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 rounded-2xl w-full max-w-sm p-6 relative shadow-2xl border border-gray-700">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 relative shadow-2xl border border-gray-200">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white transition"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 transition"
             >
               <X size={20} />
             </button>
 
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-white mb-1">
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">
                 {isLogin ? "Welcome Back" : "Create Account"}
               </h2>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-500 text-sm">
                 {isLogin ? "Sign in to continue" : "Join us today"}
               </p>
             </div>
@@ -403,7 +399,7 @@ const Navbar = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-red-500 transition"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
                     placeholder="Full Name"
                     required
                   />
@@ -416,7 +412,7 @@ const Navbar = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-red-500 transition"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
                   placeholder="Email"
                   required
                 />
@@ -428,14 +424,14 @@ const Navbar = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 pr-10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-red-500 transition"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
                   placeholder="Password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-900 transition"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -448,14 +444,14 @@ const Navbar = () => {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 pr-10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-red-500 transition"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
                     placeholder="Confirm Password"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-900 transition"
                   >
                     {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -463,14 +459,14 @@ const Navbar = () => {
               )}
 
               {error && (
-                <div className="bg-red-900/30 border border-red-500 text-red-400 px-3 py-2 rounded-lg text-xs">
+                <div className="bg-red-50 border border-red-300 text-red-600 px-3 py-2 rounded-lg text-xs">
                   {error}
                 </div>
               )}
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white py-2.5 rounded-lg font-semibold text-sm hover:shadow-lg hover:from-red-500 hover:to-orange-500 transition"
+                className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-2.5 rounded-lg font-semibold text-sm hover:shadow-lg hover:from-red-600 hover:to-red-700 transition"
               >
                 {isLogin ? "Sign In" : "Create Account"}
               </button>
@@ -482,12 +478,12 @@ const Navbar = () => {
                   setIsLogin(!isLogin);
                   setError("");
                 }}
-                className="text-gray-400 hover:text-white text-sm transition"
+                className="text-gray-600 hover:text-gray-900 text-sm transition"
               >
                 {isLogin
                   ? "Don't have an account? "
                   : "Already have an account? "}
-                <span className="text-orange-500 font-semibold">
+                <span className="text-red-600 font-semibold">
                   {isLogin ? "Sign up" : "Sign in"}
                 </span>
               </button>
