@@ -13,6 +13,7 @@ import Kids from "./pages/user/Kids";
 import Sale from "./pages/user/Sale";
 import Wishlist from "./pages/user/Wishlist";
 import Cart from "./pages/user/Cart";
+import Products from "./pages/admin/components/Products";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         >
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="products" element={<Products />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
