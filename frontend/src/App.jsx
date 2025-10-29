@@ -7,7 +7,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/user/Home";
 import Dashboard from "./pages/admin/Dashboard";
 import Men from "./pages/user/Men";
-import NewArrival from "./pages/user/NewArrival";
 import Women from "./pages/user/Women";
 import Kids from "./pages/user/Kids";
 import Sale from "./pages/user/Sale";
@@ -22,7 +21,6 @@ function App() {
         <Route path="/" element={<UserLayout />}>
           <Route index element={<Home />} />
           <Route path="/men" element={<Men/>} />
-          <Route path="/products" element={<NewArrival/>} />
           <Route path="/women" element={<Women/>} />
           <Route path="/kids" element={<Kids/>} />
           <Route path="/sale" element={<Sale/>} />
@@ -48,5 +46,4 @@ function App() {
 }
 
 export default App;
-
 

@@ -218,21 +218,6 @@ const Navbar = () => {
                 ></div>
               </Link>
               <Link
-                to="/products"
-                className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
-                  isActive("/products")
-                    ? "text-red-600"
-                    : "text-gray-700 hover:text-red-600"
-                }`}
-              >
-                <span>NEW ARRIVALS</span>
-                <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
-                    isActive("/products") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                ></div>
-              </Link>
-              <Link
                 to="/men"
                 className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
                   isActive("/men")
