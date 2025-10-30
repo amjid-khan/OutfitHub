@@ -43,17 +43,13 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Invalid response from server");
       }
 
-      // Store user data
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
-
-      // Handle navigation based on role
       handleRedirect(data);
-
-      return data; // Return user data
+      return data;
     } catch (err) {
       console.error("Register error:", err.message);
-      throw err; // Rethrow to handle in Navbar
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -78,17 +74,13 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Invalid response from server");
       }
 
-      // Store user data
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
-
-      // Handle navigation based on role
       handleRedirect(data);
-
-      return data; // Return user data
+      return data;
     } catch (err) {
       console.error("Login error:", err.message);
-      throw err; // Rethrow to handle in Navbar
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -114,22 +106,20 @@ export const AuthProvider = ({ children }) => {
           userData.role &&
           userData.token
         ) {
-          // Validate user data
           setUser(userData);
         } else {
-          localStorage.removeItem("user"); // Clear invalid data
+          localStorage.removeItem("user");
         }
       }
     } catch (err) {
       console.error("Error parsing stored user:", err);
-      localStorage.removeItem("user"); // Clear invalid data
+      localStorage.removeItem("user");
     } finally {
-      // initialization finished (whether we found a user or not)
       setInitializing(false);
     }
   }, []);
 
-  // ✅ Prevent going back after login (history block)
+  // ✅ Prevent going back after login
   useEffect(() => {
     if (
       user &&
@@ -145,7 +135,7 @@ export const AuthProvider = ({ children }) => {
       const res = await fetch(`${API_URL}/api/products`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.token}`, // 👈 token from logged-in user
+          Authorization: `Bearer ${user?.token}`,
         },
       });
       if (!res.ok) throw new Error("Failed to fetch products");
@@ -178,7 +168,7 @@ export const AuthProvider = ({ children }) => {
         headers: {
           Authorization: `Bearer ${user?.token}`,
         },
-        body: formData, // Multer expects FormData (image + fields)
+        body: formData,
       });
       if (!res.ok) throw new Error("Failed to add product");
       return await res.json();
@@ -222,15 +212,106 @@ export const AuthProvider = ({ children }) => {
   };
 
   // 🛒 Add to Cart
-const addToCart = async (productId) => {
+  const addToCart = async (productId) => {
+    try {
+      if (!user) {
+        toast.error("Please login to add items to your cart!");
+        return;
+      }
+
+      const response = await axios.post(
+        `${API_URL}/api/cart/add`,
+        { productId },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      toast.success("Product added to cart!");
+      return response.data;
+    } catch (error) {
+      console.error("Add to Cart Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to add product to cart."
+      );
+    }
+  };
+
+  // 💖 Wishlist API Methods
+  const getWishlist = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/wishlist`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Get Wishlist Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to load wishlist."
+      );
+    }
+  };
+
+  const addToWishlist = async (productId) => {
+    try {
+      if (!user) {
+        toast.error("Please login to add items to wishlist!");
+        return;
+      }
+
+      const response = await axios.post(
+        `${API_URL}/api/wishlist/add`,
+        { productId },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      toast.success("Added to wishlist!");
+      return response.data;
+    } catch (error) {
+      console.error("Add to Wishlist Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to add to wishlist."
+      );
+    }
+  };
+
+  const removeFromWishlist = async (productId) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/wishlist/remove`,
+        { productId },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Remove Wishlist Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to remove from wishlist."
+      );
+    }
+  };
+
+const toggleWishlist = async (productId) => {
   try {
     if (!user) {
-      toast.error("Please login to add items to your cart!");
+      toast.error("Please login to manage your wishlist!");
       return;
     }
 
     const response = await axios.post(
-      `${API_URL}/api/cart/add`,
+      `${API_URL}/api/wishlist/toggle`,
       { productId },
       {
         headers: {
@@ -239,12 +320,12 @@ const addToCart = async (productId) => {
       }
     );
 
-    toast.success("Product added to cart!");
+    // ❌ No toast here
     return response.data;
   } catch (error) {
-    console.error("Add to Cart Error:", error);
+    console.error("Toggle Wishlist Error:", error);
     toast.error(
-      error.response?.data?.message || "Failed to add product to cart."
+      error.response?.data?.message || "Failed to update wishlist."
     );
   }
 };
@@ -267,7 +348,13 @@ const addToCart = async (productId) => {
         updateProduct,
         deleteProduct,
 
-          addToCart,
+        addToCart,
+
+        // ✅ Wishlist methods
+        getWishlist,
+        addToWishlist,
+        removeFromWishlist,
+        toggleWishlist,
       }}
     >
       {children}
@@ -275,5 +362,4 @@ const addToCart = async (productId) => {
   );
 };
 
-// ✅ Custom Hook
 export const useAuth = () => useContext(AuthContext);
