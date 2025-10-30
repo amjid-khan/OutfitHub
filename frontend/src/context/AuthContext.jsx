@@ -1,6 +1,8 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const AuthContext = createContext();
 
@@ -219,6 +221,35 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 🛒 Add to Cart
+const addToCart = async (productId) => {
+  try {
+    if (!user) {
+      toast.error("Please login to add items to your cart!");
+      return;
+    }
+
+    const response = await axios.post(
+      `${API_URL}/api/cart/add`,
+      { productId },
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+
+    toast.success("Product added to cart!");
+    return response.data;
+  } catch (error) {
+    console.error("Add to Cart Error:", error);
+    toast.error(
+      error.response?.data?.message || "Failed to add product to cart."
+    );
+  }
+};
+
+
   return (
     <AuthContext.Provider
       value={{
@@ -235,6 +266,8 @@ export const AuthProvider = ({ children }) => {
         addProduct,
         updateProduct,
         deleteProduct,
+
+          addToCart,
       }}
     >
       {children}

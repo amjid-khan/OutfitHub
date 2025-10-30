@@ -5,6 +5,7 @@ import path from "path";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -22,6 +23,7 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 // ✅ Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/cart", cartRoutes);
 
 app.listen(process.env.PORT, () =>
     console.log(`✅ Server running on port ${process.env.PORT}`)

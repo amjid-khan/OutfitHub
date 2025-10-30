@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Search, Heart, ShoppingBag } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify"; // ✅ import toastify
 
 const Men = () => {
-  const { getAllProducts } = useAuth(); // from your AuthContext
+  const { getAllProducts, addToCart, user } = useAuth(); // ✅ get addToCart & user from context
   const [allProducts, setAllProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Shoes");
   const [hoveredProduct, setHoveredProduct] = useState(null);
@@ -27,7 +28,6 @@ const Men = () => {
       try {
         setLoading(true);
         const data = await getAllProducts();
-        // Filter products only for Men category (mainCategory)
         const menProducts = data.filter(
           (item) => item.mainCategory === "Men"
         );
@@ -45,6 +45,16 @@ const Men = () => {
   const filteredProducts = allProducts.filter(
     (product) => product.subCategory === selectedCategory
   );
+
+  // 🛒 Handle Add to Cart
+  const handleAddToCart = async (productId) => {
+    if (!user) {
+      toast.warn("Please login to add items to your cart!");
+      return;
+    }
+
+    await addToCart(productId); // ✅ handled by AuthContext
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
@@ -70,7 +80,7 @@ const Men = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex gap-10">
-          {/* Left Sidebar - Filters */}
+          {/* Sidebar */}
           <div className="w-72 flex-shrink-0">
             <div className="bg-white rounded-2xl shadow-sm p-8 sticky top-28">
               <div className="flex items-center justify-between mb-6">
@@ -111,7 +121,7 @@ const Men = () => {
             </div>
           </div>
 
-          {/* Right Side - Products Grid */}
+          {/* Products Grid */}
           <div className="flex-1">
             {loading ? (
               <p className="text-center text-gray-500 text-lg mt-20">
@@ -144,7 +154,7 @@ const Men = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredProducts.map((product) => (
                     <div
-                      key={product._id || product.id}
+                      key={product._id}
                       className="group cursor-pointer"
                       onMouseEnter={() => setHoveredProduct(product._id)}
                       onMouseLeave={() => setHoveredProduct(null)}
@@ -160,9 +170,13 @@ const Men = () => {
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                         <div
-                          className={`absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-6`}
+                          className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-6"
                         >
-                          <button className="bg-white text-gray-900 px-8 py-3 rounded-full font-semibold transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300 shadow-lg hover:bg-gray-900 hover:text-white mb-3 flex items-center gap-2">
+                          {/* ✅ Add to Cart Button */}
+                          <button
+                            onClick={() => handleAddToCart(product._id)}
+                            className="bg-white text-gray-900 px-8 py-3 rounded-full font-semibold transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300 shadow-lg hover:bg-gray-900 hover:text-white mb-3 flex items-center gap-2"
+                          >
                             <ShoppingBag className="w-5 h-5" />
                             Add to Cart
                           </button>
