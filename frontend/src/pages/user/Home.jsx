@@ -90,7 +90,7 @@ const Home = () => {
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-white to-red-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative pt-16 pb-20 sm:pt-24 sm:pb-28 lg:pt-32 lg:pb-40">
+          <div className="relative pt-0 pb-20 sm:pt-24 sm:pb-28 lg:pt-32 lg:pb-40">
             <div className="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
               {/* Left Content */}
               <div className="max-w-xl">

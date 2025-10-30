@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/auth`;
+  const API_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
   // ✅ Redirect based on role
   const handleRedirect = (userData) => {
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (formData) => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/register`, {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -44,10 +44,10 @@ export const AuthProvider = ({ children }) => {
       // Store user data
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
-      
+
       // Handle navigation based on role
       handleRedirect(data);
-      
+
       return data; // Return user data
     } catch (err) {
       console.error("Register error:", err.message);
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/login`, {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
@@ -79,10 +79,10 @@ export const AuthProvider = ({ children }) => {
       // Store user data
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
-      
+
       // Handle navigation based on role
       handleRedirect(data);
-      
+
       return data; // Return user data
     } catch (err) {
       console.error("Login error:", err.message);
@@ -105,7 +105,14 @@ export const AuthProvider = ({ children }) => {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
         const userData = JSON.parse(storedUser);
-        if (userData && userData._id && userData.name && userData.role && userData.token) { // Validate user data
+        if (
+          userData &&
+          userData._id &&
+          userData.name &&
+          userData.role &&
+          userData.token
+        ) {
+          // Validate user data
           setUser(userData);
         } else {
           localStorage.removeItem("user"); // Clear invalid data
@@ -114,8 +121,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error("Error parsing stored user:", err);
       localStorage.removeItem("user"); // Clear invalid data
-    }
-    finally {
+    } finally {
       // initialization finished (whether we found a user or not)
       setInitializing(false);
     }
@@ -123,10 +129,95 @@ export const AuthProvider = ({ children }) => {
 
   // ✅ Prevent going back after login (history block)
   useEffect(() => {
-    if (user && (location.pathname === "/login" || location.pathname === "/register")) {
+    if (
+      user &&
+      (location.pathname === "/login" || location.pathname === "/register")
+    ) {
       handleRedirect(user);
     }
   }, [user, location]);
+
+  // ✅ Product API Methods
+  const getAllProducts = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/products`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.token}`, // 👈 token from logged-in user
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch products");
+      return await res.json();
+    } catch (err) {
+      console.error("Get all products error:", err.message);
+      throw err;
+    }
+  };
+
+  const getProductById = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch product details");
+      return await res.json();
+    } catch (err) {
+      console.error("Get product by ID error:", err.message);
+      throw err;
+    }
+  };
+
+  const addProduct = async (formData) => {
+    try {
+      const res = await fetch(`${API_URL}/api/products/add`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: formData, // Multer expects FormData (image + fields)
+      });
+      if (!res.ok) throw new Error("Failed to add product");
+      return await res.json();
+    } catch (err) {
+      console.error("Add product error:", err.message);
+      throw err;
+    }
+  };
+
+  const updateProduct = async (id, formData) => {
+    try {
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: formData,
+      });
+      if (!res.ok) throw new Error("Failed to update product");
+      return await res.json();
+    } catch (err) {
+      console.error("Update product error:", err.message);
+      throw err;
+    }
+  };
+
+  const deleteProduct = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to delete product");
+      return await res.json();
+    } catch (err) {
+      console.error("Delete product error:", err.message);
+      throw err;
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -138,6 +229,12 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         isAuthenticated: !!user,
+
+        getAllProducts,
+        getProductById,
+        addProduct,
+        updateProduct,
+        deleteProduct,
       }}
     >
       {children}
