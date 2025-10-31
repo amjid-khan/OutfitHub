@@ -10,6 +10,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
+  const [wishlistCount, setWishlistCount] = useState(0);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -239,28 +241,33 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 💖 Wishlist API Methods
 // 💖 Wishlist API Methods
 const getWishlist = async () => {
   try {
     if (!user?.token) {
       console.warn("⏳ Token not ready yet, skipping wishlist call");
-      return null; // prevent request with undefined token
+      return [];
     }
-
-    console.log("✅ Token being sent to getWishlist:", user.token);
 
     const response = await axios.get(`${API_URL}/api/wishlist`, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
 
-    console.log("🎯 Wishlist data received:", response.data);
-    return response.data;
+    const products = response.data?.wishlist?.products || [];
+
+    // ✅ Update the count before returning
+    setWishlistCount(products.length);
+
+    console.log("🎯 Wishlist count updated:", products.length);
+    return products;
   } catch (error) {
     console.error("❌ Get Wishlist Error:", error);
     toast.error(error.response?.data?.message || "Failed to load wishlist.");
+    return [];
   }
 };
+
+
 
 const addToWishlist = async (productId) => {
   try {
@@ -332,7 +339,9 @@ const toggleWishlist = async (productId) => {
       error.response?.data?.message || "Failed to update wishlist."
     );
   }
-};
+  };
+  
+  
 
   return (
     <AuthContext.Provider
@@ -358,6 +367,7 @@ const toggleWishlist = async (productId) => {
         addToWishlist,
         removeFromWishlist,
         toggleWishlist,
+          wishlistCount,
       }}
     >
       {children}

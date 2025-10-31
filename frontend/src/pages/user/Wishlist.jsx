@@ -3,7 +3,8 @@ import { useAuth } from "../../context/AuthContext"; // ✅ Correct named import
 import { toast } from "react-toastify";
 
 const Wishlist = () => {
-  const { getWishlist, removeFromWishlist } = useAuth();
+    const API_URL = `${import.meta.env.VITE_API_BASE_URL}`;
+  const { getWishlist, removeFromWishlist  } = useAuth();
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -64,11 +65,16 @@ const Wishlist = () => {
             key={item._id}
             className="border rounded-xl shadow-sm p-4 flex flex-col items-center hover:shadow-md transition"
           >
-            <img
-              src={item.image}
-              alt={item.name}
-              className="w-40 h-40 object-cover rounded-lg mb-4"
-            />
+           <img
+  src={
+    item.image
+      ? `${API_URL}/uploads/${item.image}`
+      : "https://via.placeholder.com/400x400?text=No+Image"
+  }
+  alt={item.name}
+  className="w-40 h-40 object-cover rounded-lg mb-4"
+/>
+
             <h3 className="font-semibold text-lg text-center">{item.name}</h3>
             <p className="text-gray-600 mt-1">₹{item.price}</p>
             <button

@@ -18,7 +18,7 @@ import {
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, login, register, logout, isAuthenticated } = useAuth();
+  const { user, login, register, logout, isAuthenticated , wishlistCount} = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -112,7 +112,7 @@ const Navbar = () => {
               >
                 <Heart size={20} className="text-gray-700" />
                 <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                  0
+                  {wishlistCount || 0}
                 </span>
               </Link>
 
