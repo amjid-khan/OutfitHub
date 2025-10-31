@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Search, Heart, ShoppingBag } from "lucide-react";
-import { useAuth } from "../../context/AuthContext"; // make sure this provides getAllProducts()
+import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 const Women = () => {
-  const { getAllProducts } = useAuth();
+  const {
+    getAllProducts,
+    addToCart,
+    user,
+    getWishlist,
+    toggleWishlist,
+  } = useAuth();
+
   const [allProducts, setAllProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Shoes");
   const [hoveredProduct, setHoveredProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [wishlist, setWishlist] = useState([]); // ✅ Wishlist state
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -22,13 +31,12 @@ const Women = () => {
     { id: 8, name: "Accessories" },
   ];
 
-  // 🔹 Fetch products from backend
+  // 🔹 Fetch all products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const data = await getAllProducts();
-        // ✅ Filter only Women's category
         const womenProducts = data.filter(
           (item) => item.mainCategory === "Women"
         );
@@ -42,10 +50,67 @@ const Women = () => {
     fetchProducts();
   }, [getAllProducts]);
 
+  // 💖 Fetch wishlist
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (user) {
+        try {
+          const wishlistData = await getWishlist();
+          const items = Array.isArray(wishlistData)
+            ? wishlistData
+            : wishlistData?.wishlist || [];
+
+          const normalized = items.map((item) =>
+            typeof item === "string" ? item : item._id
+          );
+
+          setWishlist(normalized);
+        } catch (error) {
+          console.error("Error loading wishlist:", error);
+          setWishlist([]);
+        }
+      } else {
+        setWishlist([]);
+      }
+    };
+    fetchWishlist();
+  }, [user, getWishlist]);
+
   // 🔹 Filter by selected subcategory
   const filteredProducts = allProducts.filter(
     (product) => product.subCategory === selectedCategory
   );
+
+  // 🛒 Handle Add to Cart
+  const handleAddToCart = async (productId) => {
+    if (!user) {
+      toast.warn("Please login to add items to your cart!");
+      return;
+    }
+    await addToCart(productId);
+  };
+
+  // 💖 Handle Wishlist Toggle
+  const handleWishlistToggle = async (productId) => {
+    if (!user) {
+      toast.warn("Please login to manage your wishlist!");
+      return;
+    }
+
+    try {
+      const result = await toggleWishlist(productId);
+
+      if (wishlist.includes(productId)) {
+        setWishlist(wishlist.filter((id) => id !== productId));
+        toast.info("Removed from wishlist!");
+      } else {
+        setWishlist([...wishlist, productId]);
+        toast.success("Added to wishlist!");
+      }
+    } catch (error) {
+      console.error("Wishlist toggle error:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 to-white">
@@ -143,48 +208,73 @@ const Women = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {filteredProducts.map((product) => (
-                    <div
-                      key={product._id}
-                      className="group cursor-pointer"
-                      onMouseEnter={() => setHoveredProduct(product._id)}
-                      onMouseLeave={() => setHoveredProduct(null)}
-                    >
-                      <div className="relative overflow-hidden rounded-2xl bg-gray-100 mb-4 aspect-square shadow-md hover:shadow-xl transition-shadow duration-300">
-                        <img
-                          src={
-                            product.image
-                              ? `${BASE_URL}/uploads/${product.image}`
-                              : "https://via.placeholder.com/300x300.png?text=No+Image"
-                          }
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div
-                          className={`absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-6`}
-                        >
-                          <button className="bg-white text-pink-600 px-8 py-3 rounded-full font-semibold transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300 shadow-lg hover:bg-pink-600 hover:text-white mb-3 flex items-center gap-2">
-                            <ShoppingBag className="w-5 h-5" />
-                            Add to Cart
+                  {filteredProducts.map((product) => {
+                    const isWishlisted = wishlist.includes(product._id);
+
+                    return (
+                      <div
+                        key={product._id}
+                        className="group cursor-pointer"
+                        onMouseEnter={() => setHoveredProduct(product._id)}
+                        onMouseLeave={() => setHoveredProduct(null)}
+                      >
+                        <div className="relative overflow-hidden rounded-2xl bg-gray-100 mb-4 aspect-square shadow-md hover:shadow-xl transition-shadow duration-300">
+                          <img
+                            src={
+                              product.image
+                                ? `${BASE_URL}/uploads/${product.image}`
+                                : "https://via.placeholder.com/300x300.png?text=No+Image"
+                            }
+                            alt={product.name}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+
+                          {/* Hover Overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-6">
+                            {/* 🛒 Add to Cart */}
+                            <button
+                              onClick={() => handleAddToCart(product._id)}
+                              className="bg-white text-pink-600 px-8 py-3 rounded-full font-semibold transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300 shadow-lg hover:bg-pink-600 hover:text-white mb-3 flex items-center gap-2"
+                            >
+                              <ShoppingBag className="w-5 h-5" />
+                              Add to Cart
+                            </button>
+                          </div>
+
+                          {/* 💖 Wishlist Button */}
+                          <button
+                            onClick={() => handleWishlistToggle(product._id)}
+                            className={`absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 ${
+                              isWishlisted ? "text-pink-500" : "text-gray-700"
+                            }`}
+                          >
+                            <Heart
+                              className={`w-5 h-5 ${
+                                isWishlisted
+                                  ? "fill-pink-500 text-pink-500"
+                                  : "text-gray-700"
+                              }`}
+                            />
                           </button>
+
+                          {/* Tag */}
+                          <div className="absolute top-4 left-4 bg-pink-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                            NEW
+                          </div>
                         </div>
-                        <button className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110">
-                          <Heart className="w-5 h-5 text-pink-500" />
-                        </button>
-                        <div className="absolute top-4 left-4 bg-pink-600 text-white px-3 py-1 rounded-full text-xs font-bold">
-                          NEW
+
+                        {/* Product Info */}
+                        <div className="px-1">
+                          <h3 className="font-semibold text-gray-900 mb-2 text-lg group-hover:text-pink-600 transition">
+                            {product.name}
+                          </h3>
+                          <p className="text-2xl font-bold text-gray-900">
+                            Rs. {product.price?.toLocaleString()}
+                          </p>
                         </div>
                       </div>
-                      <div className="px-1">
-                        <h3 className="font-semibold text-gray-900 mb-2 text-lg group-hover:text-pink-600 transition">
-                          {product.name}
-                        </h3>
-                        <p className="text-2xl font-bold text-gray-900">
-                          Rs. {product.price?.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </>
             )}

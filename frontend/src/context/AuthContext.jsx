@@ -240,87 +240,91 @@ export const AuthProvider = ({ children }) => {
   };
 
   // 💖 Wishlist API Methods
-  const getWishlist = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/wishlist`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Get Wishlist Error:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to load wishlist."
-      );
-    }
-  };
-
-  const addToWishlist = async (productId) => {
-    try {
-      if (!user) {
-        toast.error("Please login to add items to wishlist!");
-        return;
-      }
-
-      const response = await axios.post(
-        `${API_URL}/api/wishlist/add`,
-        { productId },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
-
-      toast.success("Added to wishlist!");
-      return response.data;
-    } catch (error) {
-      console.error("Add to Wishlist Error:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to add to wishlist."
-      );
-    }
-  };
-
-  const removeFromWishlist = async (productId) => {
-    try {
-      const response = await axios.post(
-        `${API_URL}/api/wishlist/remove`,
-        { productId },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Remove Wishlist Error:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to remove from wishlist."
-      );
-    }
-  };
-
-const toggleWishlist = async (productId) => {
+// 💖 Wishlist API Methods
+const getWishlist = async () => {
   try {
-    if (!user) {
-      toast.error("Please login to manage your wishlist!");
+    if (!user?.token) {
+      console.warn("⏳ Token not ready yet, skipping wishlist call");
+      return null; // prevent request with undefined token
+    }
+
+    console.log("✅ Token being sent to getWishlist:", user.token);
+
+    const response = await axios.get(`${API_URL}/api/wishlist`, {
+      headers: { Authorization: `Bearer ${user.token}` },
+    });
+
+    console.log("🎯 Wishlist data received:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Get Wishlist Error:", error);
+    toast.error(error.response?.data?.message || "Failed to load wishlist.");
+  }
+};
+
+const addToWishlist = async (productId) => {
+  try {
+    if (!user?.token) {
+      toast.error("Please login to add items to wishlist!");
+      return;
+    }
+
+    console.log("Adding to wishlist with token:", user.token);
+
+    const response = await axios.post(
+      `${API_URL}/api/wishlist/add`,
+      { productId },
+      { headers: { Authorization: `Bearer ${user.token}` } }
+    );
+
+    toast.success("Added to wishlist!");
+    return response.data;
+  } catch (error) {
+    console.error("Add to Wishlist Error:", error);
+    toast.error(
+      error.response?.data?.message || "Failed to add to wishlist."
+    );
+  }
+};
+
+const removeFromWishlist = async (productId) => {
+  try {
+    if (!user?.token) {
+      toast.error("Please login first!");
       return;
     }
 
     const response = await axios.post(
-      `${API_URL}/api/wishlist/toggle`,
+      `${API_URL}/api/wishlist/remove`,
       { productId },
-      {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
+      { headers: { Authorization: `Bearer ${user.token}` } }
     );
 
-    // ❌ No toast here
+    toast.info("Removed from wishlist!");
+    return response.data;
+  } catch (error) {
+    console.error("Remove Wishlist Error:", error);
+    toast.error(
+      error.response?.data?.message || "Failed to remove from wishlist."
+    );
+  }
+};
+
+const toggleWishlist = async (productId) => {
+  try {
+    if (!user?.token) {
+      toast.error("Please login to manage your wishlist!");
+      return;
+    }
+
+    console.log("Toggling wishlist with token:", user.token);
+
+    const response = await axios.post(
+      `${API_URL}/api/wishlist/toggle`,
+      { productId },
+      { headers: { Authorization: `Bearer ${user.token}` } }
+    );
+
     return response.data;
   } catch (error) {
     console.error("Toggle Wishlist Error:", error);
@@ -329,7 +333,6 @@ const toggleWishlist = async (productId) => {
     );
   }
 };
-
 
   return (
     <AuthContext.Provider

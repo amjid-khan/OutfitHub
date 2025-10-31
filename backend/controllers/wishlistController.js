@@ -5,18 +5,24 @@ import Product from "../models/Product.js";
 // 🩵 Get User Wishlist
 export const getWishlist = async (req, res) => {
     try {
-        const wishlist = await Wishlist.findOne({ user: req.user.id }).populate("products");
+        console.log("✅ Reached getWishlist route for user:", req.user?._id || req.user?.id);
+
+        // Find wishlist for the logged-in user
+        const wishlist = await Wishlist.findOne({ user: req.user._id }).populate("products");
 
         if (!wishlist) {
+            console.log("ℹ️ No wishlist found for user");
             return res.status(200).json({ success: true, wishlist: { products: [] } });
         }
 
+        console.log("✅ Wishlist found:", wishlist);
         res.status(200).json({ success: true, wishlist });
     } catch (error) {
-        console.error("Get Wishlist Error:", error);
+        console.error("❌ Get Wishlist Error:", error);
         res.status(500).json({ message: "Error fetching wishlist" });
     }
 };
+
 
 // ❤️ Add to Wishlist
 export const addToWishlist = async (req, res) => {

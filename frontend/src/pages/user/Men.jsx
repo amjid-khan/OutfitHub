@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Search, Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag, Star, TrendingUp, Zap } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
@@ -10,13 +10,13 @@ const Men = () => {
     user,
     getWishlist,
     toggleWishlist,
-  } = useAuth(); // ✅ Added wishlist functions
+  } = useAuth();
 
   const [allProducts, setAllProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Shoes");
   const [hoveredProduct, setHoveredProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [wishlist, setWishlist] = useState([]); // ✅ Track wishlist
+  const [wishlist, setWishlist] = useState([]);
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const categories = [
@@ -89,100 +89,154 @@ const Men = () => {
     await addToCart(productId);
   };
 
-  // 💖 Handle Wishlist Toggle
-// 💖 Handle Wishlist Toggle
-const handleWishlistToggle = async (productId) => {
-  if (!user) {
-    toast.warn("Please login to manage your wishlist!");
-    return;
-  }
-
-  try {
-    const res = await toggleWishlist(productId);
-
-    // ✅ Determine what happened using backend message
-    if (res?.message?.includes("Added")) {
-      toast.success("Added to wishlist ❤️");
-      setWishlist([...wishlist, productId]);
-    } else if (res?.message?.includes("Removed")) {
-      toast.info("Removed from wishlist 💔");
-      setWishlist(wishlist.filter((id) => id !== productId));
-    } else {
-      // Fallback for unexpected response
-      if (wishlist.includes(productId)) {
-        setWishlist(wishlist.filter((id) => id !== productId));
-        toast.info("Removed from wishlist 💔");
-      } else {
-        setWishlist([...wishlist, productId]);
-        toast.success("Added to wishlist ❤️");
-      }
+  // Handle Wishlist Toggle
+  const handleWishlistToggle = async (productId) => {
+    if (!user) {
+      toast.warn("Please login to manage your wishlist!");
+      return;
     }
-  } catch (error) {
-    console.error("Wishlist toggle error:", error);
-    toast.error("Error updating wishlist!");
-  }
-};
 
+    try {
+      const res = await toggleWishlist(productId);
+
+      // ✅ Determine what happened using backend message
+      if (res?.message?.includes("Added")) {
+        toast.success("Added to wishlist ❤️");
+        setWishlist([...wishlist, productId]);
+      } else if (res?.message?.includes("Removed")) {
+        toast.info("Removed from wishlist 💔");
+        setWishlist(wishlist.filter((id) => id !== productId));
+      } else {
+        // Fallback for unexpected response
+        if (wishlist.includes(productId)) {
+          setWishlist(wishlist.filter((id) => id !== productId));
+          toast.info("Removed from wishlist 💔");
+        } else {
+          setWishlist([...wishlist, productId]);
+          toast.success("Added to wishlist ❤️");
+        }
+      }
+    } catch (error) {
+      console.error("Wishlist toggle error:", error);
+      toast.error("Error updating wishlist!");
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-      {/* Header */}
-      <div className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between gap-8">
-            <div className="relative flex-1 max-w-2xl">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search for shoes, shirts, accessories..."
-                className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all"
-              />
+    <div className="min-h-screen bg-white">
+      {/* Hero Banner - Modern White Background */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 py-20">
+          <div className="grid lg:grid-cols-12 gap-16 items-center">
+            {/* Left Content */}
+            <div className="lg:col-span-7 space-y-7">
+              <div className="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider">
+                <Zap className="w-4 h-4" />
+                New Arrivals 2025
+              </div>
+              
+              <h1 className="text-7xl lg:text-8xl font-black text-gray-900 leading-[1.05]">
+                Premium Style
+                <span className="block text-gray-400 mt-2">For Modern Men</span>
+              </h1>
+              
+              <p className="text-xl text-gray-600 max-w-xl leading-relaxed">
+                Discover the finest collection of men's fashion. From sophisticated formal wear to casual streetwear, we've got everything you need to elevate your wardrobe.
+              </p>
+
+              {/* Trust Badges */}
+              <div className="flex flex-wrap gap-10 pt-6 border-t border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className="bg-gray-100 p-3 rounded-xl">
+                    <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
+                  </div>
+                  <div>
+                    <p className="text-base font-black text-gray-900">4.8/5 Rating</p>
+                    <p className="text-sm text-gray-500 font-medium">2,500+ Reviews</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="bg-gray-100 p-3 rounded-xl">
+                    <TrendingUp className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-base font-black text-gray-900">Fast Shipping</p>
+                    <p className="text-sm text-gray-500 font-medium">2-3 Day Delivery</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 whitespace-nowrap">
-              Men's Collection
-            </h1>
+
+            {/* Right Stats */}
+            <div className="lg:col-span-5">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-gray-50 to-white p-9 rounded-3xl border-2 border-gray-100 hover:border-black transition-all hover:shadow-xl group">
+                  <div className="bg-black text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <ShoppingBag className="w-8 h-8" />
+                  </div>
+                  <p className="text-5xl font-black text-gray-900 mb-2">500+</p>
+                  <p className="text-sm text-gray-600 font-bold uppercase tracking-wide">Products</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-gray-50 to-white p-9 rounded-3xl border-2 border-gray-100 hover:border-black transition-all hover:shadow-xl group mt-10">
+                  <div className="bg-black text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <Star className="w-8 h-8" />
+                  </div>
+                  <p className="text-5xl font-black text-gray-900 mb-2">50+</p>
+                  <p className="text-sm text-gray-600 font-bold uppercase tracking-wide">Brands</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-gray-50 to-white p-9 rounded-3xl border-2 border-gray-100 hover:border-black transition-all hover:shadow-xl group -mt-4">
+                  <div className="bg-black text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <Heart className="w-8 h-8" />
+                  </div>
+                  <p className="text-5xl font-black text-gray-900 mb-2">10K+</p>
+                  <p className="text-sm text-gray-600 font-bold uppercase tracking-wide">Customers</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-gray-50 to-white p-9 rounded-3xl border-2 border-gray-100 hover:border-black transition-all hover:shadow-xl group">
+                  <div className="bg-black text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                    <Zap className="w-8 h-8" />
+                  </div>
+                  <p className="text-5xl font-black text-gray-900 mb-2">24/7</p>
+                  <p className="text-sm text-gray-600 font-bold uppercase tracking-wide">Support</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        <div className="flex gap-10">
+      <div className="max-w-7xl mx-auto px-6 py-14">
+        <div className="flex gap-12">
           {/* Sidebar */}
           <div className="w-72 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-sm p-8 sticky top-28">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Categories</h2>
-                <div className="h-1 w-12 bg-gradient-to-r from-gray-900 to-gray-600 rounded-full"></div>
-              </div>
-              <div className="space-y-4">
+            <div className="bg-white rounded-3xl border-2 border-gray-100 p-8 sticky top-8 hover:shadow-lg transition-all">
+              <h2 className="text-2xl font-black text-gray-900 mb-7">Categories</h2>
+              <div className="space-y-2">
                 {categories.map((category) => (
                   <label
                     key={category.id}
-                    className={`flex items-center justify-between cursor-pointer group py-2 px-3 rounded-lg transition-all ${
+                    className={`flex items-center cursor-pointer py-4 px-5 rounded-2xl transition-all border-2 ${
                       selectedCategory === category.name
-                        ? "bg-gray-100"
-                        : "hover:bg-gray-50"
+                        ? "border-black bg-gray-50"
+                        : "border-transparent hover:bg-gray-50"
                     }`}
                   >
-                    <div className="flex items-center flex-1">
-                      <input
-                        type="radio"
-                        name="subcategory"
-                        checked={selectedCategory === category.name}
-                        onChange={() => setSelectedCategory(category.name)}
-                        className="w-5 h-5 text-gray-900 border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-gray-900 cursor-pointer transition-all"
-                      />
-                      <span
-                        className={`ml-4 text-base font-medium ${
-                          selectedCategory === category.name
-                            ? "text-gray-900"
-                            : "text-gray-700"
-                        }`}
-                      >
-                        {category.name}
-                      </span>
-                    </div>
+                    <input
+                      type="radio"
+                      name="subcategory"
+                      checked={selectedCategory === category.name}
+                      onChange={() => setSelectedCategory(category.name)}
+                      className="sr-only"
+                    />
+                    <span className="text-base font-bold text-gray-900 flex-1">
+                      {category.name}
+                    </span>
+                    {selectedCategory === category.name && (
+                      <div className="w-2.5 h-2.5 bg-black rounded-full"></div>
+                    )}
                   </label>
                 ))}
               </div>
@@ -192,25 +246,28 @@ const handleWishlistToggle = async (productId) => {
           {/* Products Grid */}
           <div className="flex-1">
             {loading ? (
-              <p className="text-center text-gray-500 text-lg mt-20">
-                Loading products...
-              </p>
+              <div className="text-center py-24">
+                <div className="inline-block w-14 h-14 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
+                <p className="text-gray-600 font-bold mt-5 text-lg">Loading products...</p>
+              </div>
             ) : filteredProducts.length === 0 ? (
-              <p className="text-center text-gray-500 text-lg mt-20">
-                No products found in "{selectedCategory}"
-              </p>
+              <div className="text-center py-24">
+                <p className="text-gray-500 text-xl font-bold">
+                  No products found in "{selectedCategory}"
+                </p>
+              </div>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-10">
                   <div>
-                    <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                    <p className="text-sm text-gray-500 uppercase tracking-wider mb-2 font-bold">
                       Showing Results
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-4xl font-black text-gray-900">
                       {filteredProducts.length} {selectedCategory}
                     </p>
                   </div>
-                  <select className="bg-white border-2 border-gray-200 rounded-xl px-5 py-3 text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent cursor-pointer hover:border-gray-300 transition-all">
+                  <select className="bg-white border-2 border-gray-200 rounded-2xl px-7 py-3.5 text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-black focus:border-black cursor-pointer hover:border-gray-400 transition-all shadow-sm">
                     <option>Featured</option>
                     <option>Price: Low to High</option>
                     <option>Price: High to Low</option>
@@ -221,7 +278,7 @@ const handleWishlistToggle = async (productId) => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredProducts.map((product) => {
-                    const isWishlisted = wishlist.includes(product._id); // ✅ now safe
+                    const isWishlisted = wishlist.includes(product._id);
 
                     return (
                       <div
@@ -230,34 +287,33 @@ const handleWishlistToggle = async (productId) => {
                         onMouseEnter={() => setHoveredProduct(product._id)}
                         onMouseLeave={() => setHoveredProduct(null)}
                       >
-                        <div className="relative overflow-hidden rounded-2xl bg-gray-100 mb-4 aspect-square shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <div className="relative overflow-hidden rounded-3xl bg-white mb-5 aspect-square border-2 border-gray-200 group-hover:border-black transition-all duration-500 group-hover:shadow-2xl">
                           <img
                             src={
                               product.image
                                 ? `${BASE_URL}/uploads/${product.image}`
-                                : "https://via.placeholder.com/300x300?text=No+Image"
+                                : "https://via.placeholder.com/400x400?text=No+Image"
                             }
                             alt={product.name}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
 
-                          {/* Hover Actions */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-6">
-                            {/* 🛒 Add to Cart */}
+                          {/* Hover Overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-end pb-8">
                             <button
                               onClick={() => handleAddToCart(product._id)}
-                              className="bg-white text-gray-900 px-8 py-3 rounded-full font-semibold transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300 shadow-lg hover:bg-gray-900 hover:text-white mb-3 flex items-center gap-2"
+                              className="bg-white text-black px-10 py-4 rounded-full font-black transform translate-y-12 group-hover:translate-y-0 transition-all duration-500 shadow-2xl hover:bg-black hover:text-white flex items-center gap-3 text-sm uppercase tracking-wider"
                             >
                               <ShoppingBag className="w-5 h-5" />
                               Add to Cart
                             </button>
                           </div>
 
-                          {/* 💖 Wishlist Heart */}
+                          {/* Wishlist Heart */}
                           <button
                             onClick={() => handleWishlistToggle(product._id)}
-                            className={`absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 ${
-                              isWishlisted ? "text-red-500" : "text-gray-700"
+                            className={`absolute top-5 right-5 bg-white/95 backdrop-blur-sm p-3.5 rounded-2xl shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-500 hover:scale-125 border-2 ${
+                              isWishlisted ? "border-red-500 text-red-500 bg-red-50" : "border-gray-200 text-gray-700"
                             }`}
                           >
                             <Heart
@@ -270,19 +326,21 @@ const handleWishlistToggle = async (productId) => {
                           </button>
 
                           {/* Tag */}
-                          <div className="absolute top-4 left-4 bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-bold">
+                          <div className="absolute top-5 left-5 bg-black text-white px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
                             NEW
                           </div>
                         </div>
 
                         {/* Product Info */}
-                        <div className="px-1">
-                          <h3 className="font-semibold text-gray-900 mb-2 text-lg group-hover:text-gray-600 transition">
+                        <div className="px-2">
+                          <h3 className="font-black text-gray-900 mb-2 text-lg group-hover:text-gray-600 transition-colors line-clamp-2">
                             {product.name}
                           </h3>
-                          <p className="text-2xl font-bold text-gray-900">
-                            Rs. {product.price?.toLocaleString()}
-                          </p>
+                          <div className="flex items-baseline gap-2">
+                            <p className="text-2xl font-black text-gray-900">
+                              Rs. {product.price?.toLocaleString()}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     );
