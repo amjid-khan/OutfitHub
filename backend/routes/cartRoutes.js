@@ -1,5 +1,5 @@
 import express from "express";
-import { addToCart, getCart, removeFromCart } from "../controllers/cartController.js";
+import { addToCart, getCart, removeFromCart, updateCartQuantity } from "../controllers/cartController.js";
 import { protect } from "../middleware/authMiddleware.js"; // 🔒 middleware for JWT auth
 
 const router = express.Router();
@@ -11,6 +11,7 @@ router.post("/add", protect, addToCart);
 router.get("/", protect, getCart);
 
 // 🔹 Remove product from cart
+router.post("/update", protect, updateCartQuantity);  // ✅ this line is important
 router.delete("/remove/:productId", protect, removeFromCart);
 
 export default router;

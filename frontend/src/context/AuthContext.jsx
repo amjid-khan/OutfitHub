@@ -12,6 +12,10 @@ export const AuthProvider = ({ children }) => {
   const [initializing, setInitializing] = useState(true);
   const [wishlistCount, setWishlistCount] = useState(0);
 
+  // 🛒 New cart states
+  const [cartItems, setCartItems] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -37,13 +41,9 @@ export const AuthProvider = ({ children }) => {
       });
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
-
-      if (!data._id || !data.name || !data.role) {
+      if (!res.ok) throw new Error(data.message || "Registration failed");
+      if (!data._id || !data.name || !data.role)
         throw new Error("Invalid response from server");
-      }
 
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
@@ -68,13 +68,9 @@ export const AuthProvider = ({ children }) => {
       });
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      if (!data._id || !data.name || !data.role) {
+      if (!res.ok) throw new Error(data.message || "Login failed");
+      if (!data._id || !data.name || !data.role)
         throw new Error("Invalid response from server");
-      }
 
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
@@ -92,6 +88,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    setCartItems([]);
+    setCartCount(0);
     navigate("/", { replace: true });
   };
 
@@ -213,10 +211,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🛒 Add to Cart
+  // 🛒 CART API METHODS
+  const getCart = async () => {
+    try {
+      if (!user?.token) return [];
+      const res = await axios.get(`${API_URL}/api/cart`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      const items = res.data?.cart || [];
+      setCartItems(items);
+      setCartCount(items.reduce((sum, i) => sum + i.quantity, 0));
+      return items;
+    } catch (error) {
+      console.error("Get Cart Error:", error);
+      toast.error("Failed to load cart.");
+      return [];
+    }
+  };
+
   const addToCart = async (productId) => {
     try {
-      if (!user) {
+      if (!user?.token) {
         toast.error("Please login to add items to your cart!");
         return;
       }
@@ -232,6 +247,8 @@ export const AuthProvider = ({ children }) => {
       );
 
       toast.success("Product added to cart!");
+      // ✅ Update cart immediately after adding
+      await getCart();
       return response.data;
     } catch (error) {
       console.error("Add to Cart Error:", error);
@@ -241,107 +258,127 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-// 💖 Wishlist API Methods
-const getWishlist = async () => {
-  try {
-    if (!user?.token) {
-      console.warn("⏳ Token not ready yet, skipping wishlist call");
-      return [];
+  const updateCartQuantity = async (productId, quantity) => {
+    try {
+      const res = await axios.post(
+        `${API_URL}/api/cart/update`,
+        { productId, quantity },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      await getCart();
+      return res.data;
+    } catch (error) {
+      console.error("Update Cart Error:", error);
+      toast.error("Failed to update quantity.");
     }
+  };
 
-    const response = await axios.get(`${API_URL}/api/wishlist`, {
+const removeFromCart = async (productId) => {
+  try {
+    const res = await axios.delete(`${API_URL}/api/cart/remove/${productId}`, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
-
-    const products = response.data?.wishlist?.products || [];
-
-    // ✅ Update the count before returning
-    setWishlistCount(products.length);
-
-    console.log("🎯 Wishlist count updated:", products.length);
-    return products;
+    toast.info("Removed from cart!");
+    await getCart();
+    return res.data;
   } catch (error) {
-    console.error("❌ Get Wishlist Error:", error);
-    toast.error(error.response?.data?.message || "Failed to load wishlist.");
-    return [];
+    console.error("Remove Cart Error:", error);
+    toast.error("Failed to remove item.");
   }
 };
 
 
+  // 💖 WISHLIST API METHODS
+  const getWishlist = async () => {
+    try {
+      if (!user?.token) {
+        console.warn("⏳ Token not ready yet, skipping wishlist call");
+        return [];
+      }
 
-const addToWishlist = async (productId) => {
-  try {
-    if (!user?.token) {
-      toast.error("Please login to add items to wishlist!");
-      return;
+      const response = await axios.get(`${API_URL}/api/wishlist`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+
+      const products = response.data?.wishlist?.products || [];
+      setWishlistCount(products.length);
+      return products;
+    } catch (error) {
+      console.error("❌ Get Wishlist Error:", error);
+      toast.error(error.response?.data?.message || "Failed to load wishlist.");
+      return [];
     }
-
-    console.log("Adding to wishlist with token:", user.token);
-
-    const response = await axios.post(
-      `${API_URL}/api/wishlist/add`,
-      { productId },
-      { headers: { Authorization: `Bearer ${user.token}` } }
-    );
-
-    toast.success("Added to wishlist!");
-    return response.data;
-  } catch (error) {
-    console.error("Add to Wishlist Error:", error);
-    toast.error(
-      error.response?.data?.message || "Failed to add to wishlist."
-    );
-  }
-};
-
-const removeFromWishlist = async (productId) => {
-  try {
-    if (!user?.token) {
-      toast.error("Please login first!");
-      return;
-    }
-
-    const response = await axios.post(
-      `${API_URL}/api/wishlist/remove`,
-      { productId },
-      { headers: { Authorization: `Bearer ${user.token}` } }
-    );
-
-    toast.info("Removed from wishlist!");
-    return response.data;
-  } catch (error) {
-    console.error("Remove Wishlist Error:", error);
-    toast.error(
-      error.response?.data?.message || "Failed to remove from wishlist."
-    );
-  }
-};
-
-const toggleWishlist = async (productId) => {
-  try {
-    if (!user?.token) {
-      toast.error("Please login to manage your wishlist!");
-      return;
-    }
-
-    console.log("Toggling wishlist with token:", user.token);
-
-    const response = await axios.post(
-      `${API_URL}/api/wishlist/toggle`,
-      { productId },
-      { headers: { Authorization: `Bearer ${user.token}` } }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error("Toggle Wishlist Error:", error);
-    toast.error(
-      error.response?.data?.message || "Failed to update wishlist."
-    );
-  }
   };
-  
-  
+
+  const addToWishlist = async (productId) => {
+    try {
+      if (!user?.token) {
+        toast.error("Please login to add items to wishlist!");
+        return;
+      }
+
+      const response = await axios.post(
+        `${API_URL}/api/wishlist/add`,
+        { productId },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+
+      toast.success("Added to wishlist!");
+      await getWishlist();
+      return response.data;
+    } catch (error) {
+      console.error("Add to Wishlist Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to add to wishlist."
+      );
+    }
+  };
+
+  const removeFromWishlist = async (productId) => {
+    try {
+      if (!user?.token) {
+        toast.error("Please login first!");
+        return;
+      }
+
+      const response = await axios.post(
+        `${API_URL}/api/wishlist/remove`,
+        { productId },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+
+      toast.info("Removed from wishlist!");
+      await getWishlist();
+      return response.data;
+    } catch (error) {
+      console.error("Remove Wishlist Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to remove from wishlist."
+      );
+    }
+  };
+
+  const toggleWishlist = async (productId) => {
+    try {
+      if (!user?.token) {
+        toast.error("Please login to manage your wishlist!");
+        return;
+      }
+
+      const response = await axios.post(
+        `${API_URL}/api/wishlist/toggle`,
+        { productId },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      await getWishlist();
+      return response.data;
+    } catch (error) {
+      console.error("Toggle Wishlist Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to update wishlist."
+      );
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -360,14 +397,20 @@ const toggleWishlist = async (productId) => {
         updateProduct,
         deleteProduct,
 
+        // ✅ Cart
+        cartItems,
+        cartCount,
+        getCart,
         addToCart,
+        updateCartQuantity,
+        removeFromCart,
 
-        // ✅ Wishlist methods
+        // ✅ Wishlist
         getWishlist,
         addToWishlist,
         removeFromWishlist,
         toggleWishlist,
-          wishlistCount,
+        wishlistCount,
       }}
     >
       {children}
