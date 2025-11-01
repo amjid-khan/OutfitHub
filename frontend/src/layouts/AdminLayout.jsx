@@ -1,6 +1,8 @@
+
+// ===== AdminLayout.jsx =====
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { LogOut, User, Bell, Search, Menu, X } from "lucide-react";
+import { LogOut, Bell, Search, Menu, X } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import { useAuth } from "../context/AuthContext";
 
@@ -9,7 +11,6 @@ const AdminLayout = () => {
   const { user, logout } = useAuth();
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
-  // Prevent going back
   useEffect(() => {
     window.history.pushState(null, "", window.location.href);
     const handlePopState = () => {
@@ -19,7 +20,6 @@ const AdminLayout = () => {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Handle logout
   const handleLogout = () => {
     logout();
     navigate("/", { replace: true });
@@ -34,12 +34,12 @@ const AdminLayout = () => {
 
       {/* Mobile Sidebar Overlay */}
       {showMobileSidebar && (
-        <div className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50">
+        <div className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50">
           <div className="w-64 h-full bg-white shadow-2xl">
             <div className="p-4 flex justify-end">
               <button
                 onClick={() => setShowMobileSidebar(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition"
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
                 <X size={20} className="text-gray-700" />
               </button>
@@ -49,24 +49,23 @@ const AdminLayout = () => {
         </div>
       )}
 
-      {/* Main Admin Content */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Header */}
-        <header className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-30">
+        <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
           <div className="px-4 sm:px-6 py-4">
             <div className="flex justify-between items-center">
-              {/* Left Side - Title & Mobile Menu */}
+              {/* Left Side */}
               <div className="flex items-center gap-4">
-                {/* Mobile Menu Button */}
                 <button
                   onClick={() => setShowMobileSidebar(true)}
-                  className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition"
+                  className="lg:hidden p-2 hover:bg-gray-50 rounded-lg transition"
                 >
                   <Menu size={20} className="text-gray-700" />
                 </button>
 
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
+                  <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                     Admin Panel
                   </h1>
                   <p className="text-xs text-gray-500 hidden sm:block">
@@ -75,9 +74,9 @@ const AdminLayout = () => {
                 </div>
               </div>
 
-              {/* Right Side - Search, Notifications & User */}
+              {/* Right Side */}
               <div className="flex items-center gap-2 sm:gap-4">
-                {/* Search Bar - Hidden on mobile */}
+                {/* Search Bar - Desktop */}
                 <div className="hidden md:flex items-center">
                   <div className="relative">
                     <Search
@@ -87,21 +86,21 @@ const AdminLayout = () => {
                     <input
                       type="text"
                       placeholder="Search..."
-                      className="w-48 lg:w-64 bg-gray-50 border border-gray-300 rounded-full pl-9 pr-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
+                      className="w-48 lg:w-64 bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition"
                     />
                   </div>
                 </div>
 
                 {/* Notifications */}
-                <button className="relative p-2 hover:bg-gray-100 rounded-full transition">
+                <button className="relative p-2 hover:bg-gray-50 rounded-lg transition">
                   <Bell size={18} className="text-gray-700" />
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-semibold">
                     3
                   </span>
                 </button>
 
                 {/* Divider */}
-                <div className="w-px h-8 bg-gray-300 hidden sm:block"></div>
+                <div className="w-px h-8 bg-gray-200 hidden sm:block"></div>
 
                 {/* User Info */}
                 <div className="flex items-center gap-3">
@@ -111,7 +110,7 @@ const AdminLayout = () => {
                     </p>
                     <p className="text-xs text-gray-500">Administrator</p>
                   </div>
-                  <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                  <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center text-white font-semibold shadow-sm">
                     {user?.name?.charAt(0).toUpperCase() || "A"}
                   </div>
                 </div>
@@ -119,7 +118,7 @@ const AdminLayout = () => {
                 {/* Logout Button */}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm hover:shadow-lg hover:from-red-600 hover:to-red-700 transition-all duration-200"
+                  className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 shadow-sm hover:shadow"
                 >
                   <LogOut size={16} />
                   <span className="hidden sm:inline">Logout</span>
@@ -138,7 +137,7 @@ const AdminLayout = () => {
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full bg-gray-50 border border-gray-300 rounded-full pl-9 pr-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
+                className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition"
               />
             </div>
           </div>
@@ -147,7 +146,6 @@ const AdminLayout = () => {
         {/* Main Content Area */}
         <main className="flex-1 p-4 sm:p-6">
           <div className="max-w-7xl mx-auto">
-            {/* Outlet for nested admin pages */}
             <Outlet />
           </div>
         </main>
@@ -156,7 +154,7 @@ const AdminLayout = () => {
         <footer className="bg-white border-t border-gray-200 py-4 px-6">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
             <p className="text-sm text-gray-600">
-              © 2025 <span className="font-bold text-gray-900">SHOPMART</span>. All rights reserved.
+              © 2025 <span className="font-semibold text-gray-900">SHOPMART</span>. All rights reserved.
             </p>
             <p className="text-xs text-gray-500">
               Version 1.0.0 | Admin Panel

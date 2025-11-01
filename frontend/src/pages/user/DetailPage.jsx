@@ -11,7 +11,6 @@ const DetailPage = () => {
   
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [wishlist, setWishlist] = useState([]);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -133,14 +132,6 @@ const DetailPage = () => {
   }
 
   const isWishlisted = wishlist.includes(product._id);
-  
-  // Mock images for gallery - you can replace with actual product images array
-  const productImages = [
-    product.image ? `${BASE_URL}/uploads/${product.image}` : "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=800&h=800&fit=crop",
-    "https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=800&h=800&fit=crop",
-    "https://images.unsplash.com/photo-1525450824786-227cbef70703?w=800&h=800&fit=crop",
-    "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=800&h=800&fit=crop"
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
@@ -163,33 +154,12 @@ const DetailPage = () => {
           {/* Left - Image Gallery */}
           <div className="space-y-4">
             {/* Main Image */}
-            <div className="aspect-square rounded-3xl overflow-hidden bg-gray-100 border border-gray-200 shadow-lg">
+            <div className="aspect-square rounded-3xl overflow-hidden bg-gray-100 border border-gray-200 shadow-xl">
               <img
-                src={productImages[selectedImage]}
+                src={product.image ? `${BASE_URL}/uploads/${product.image}` : "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=800&h=800&fit=crop"}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
-            </div>
-
-            {/* Thumbnail Gallery */}
-            <div className="grid grid-cols-4 gap-3">
-              {productImages.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`aspect-square rounded-2xl overflow-hidden border-2 transition-all ${
-                    selectedImage === idx
-                      ? "border-black scale-105 shadow-lg"
-                      : "border-gray-200 hover:border-gray-400"
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`View ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
             </div>
           </div>
 
@@ -207,13 +177,13 @@ const DetailPage = () => {
 
             {/* Product Name */}
             <div>
-              <h1 className="text-4xl font-black text-gray-900 leading-tight mb-3">
+              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-4">
                 {product.name}
               </h1>
               
               {/* Rating */}
-              <div className="flex items-center gap-2">
-                <div className="flex items-center">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
                       key={star}
@@ -222,26 +192,38 @@ const DetailPage = () => {
                   ))}
                 </div>
                 <span className="text-sm text-gray-600 font-semibold">
-                  (4.8) • 256 Reviews
+                  4.8 out of 5
+                </span>
+                <span className="text-sm text-gray-400">•</span>
+                <span className="text-sm text-gray-600 font-semibold">
+                  256 Reviews
                 </span>
               </div>
             </div>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3 flex-wrap">
-              <p className="text-5xl font-black text-gray-900">
-                Rs. {product.price?.toLocaleString()}
-              </p>
-              <p className="text-2xl text-gray-400 line-through font-bold">
-                Rs. {(product.price * 1.3)?.toLocaleString()}
-              </p>
-              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold">
-                23% OFF
-              </span>
+            <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+              <div className="flex items-baseline gap-3 flex-wrap mb-2">
+                <p className="text-5xl font-black text-gray-900">
+                  Rs. {product.price?.toLocaleString()}
+                </p>
+                <p className="text-xl text-gray-400 line-through font-bold">
+                  Rs. {(product.price * 1.3)?.toLocaleString()}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1.5 bg-green-500 text-white rounded-full text-sm font-bold">
+                  Save 23%
+                </span>
+                <span className="text-sm text-gray-600 font-semibold">
+                  Limited time offer
+                </span>
+              </div>
             </div>
 
             {/* Description */}
-            <div className="border-t border-b border-gray-200 py-6">
+            <div className="bg-white rounded-2xl p-6 border border-gray-200">
+              <h3 className="text-lg font-black text-gray-900 mb-3">Product Details</h3>
               <p className="text-gray-600 leading-relaxed">
                 {product.description || "Experience premium quality and exceptional comfort with this carefully crafted product. Designed for the modern individual who values both style and functionality. Made with high-quality materials that ensure durability and long-lasting wear."}
               </p>
@@ -296,21 +278,21 @@ const DetailPage = () => {
             </div>
 
             {/* Features */}
-            <div className="grid grid-cols-3 gap-4 pt-6">
-              <div className="text-center p-4 bg-gray-50 rounded-2xl">
-                <Truck className="w-8 h-8 mx-auto mb-2 text-gray-700" />
-                <p className="text-xs font-bold text-gray-900">Free Delivery</p>
-                <p className="text-xs text-gray-500">Orders above Rs. 2000</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div className="text-center p-5 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200">
+                <Truck className="w-10 h-10 mx-auto mb-3 text-blue-600" />
+                <p className="text-sm font-black text-gray-900 mb-1">Free Delivery</p>
+                <p className="text-xs text-gray-600">Orders above Rs. 2000</p>
               </div>
-              <div className="text-center p-4 bg-gray-50 rounded-2xl">
-                <RotateCcw className="w-8 h-8 mx-auto mb-2 text-gray-700" />
-                <p className="text-xs font-bold text-gray-900">Easy Returns</p>
-                <p className="text-xs text-gray-500">7 days return</p>
+              <div className="text-center p-5 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200">
+                <RotateCcw className="w-10 h-10 mx-auto mb-3 text-green-600" />
+                <p className="text-sm font-black text-gray-900 mb-1">Easy Returns</p>
+                <p className="text-xs text-gray-600">7 days return</p>
               </div>
-              <div className="text-center p-4 bg-gray-50 rounded-2xl">
-                <Shield className="w-8 h-8 mx-auto mb-2 text-gray-700" />
-                <p className="text-xs font-bold text-gray-900">Secure Payment</p>
-                <p className="text-xs text-gray-500">100% protected</p>
+              <div className="text-center p-5 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200">
+                <Shield className="w-10 h-10 mx-auto mb-3 text-purple-600" />
+                <p className="text-sm font-black text-gray-900 mb-1">Secure Payment</p>
+                <p className="text-xs text-gray-600">100% protected</p>
               </div>
             </div>
           </div>

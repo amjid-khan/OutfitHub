@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Package,
   ShoppingBag,
@@ -16,307 +16,508 @@ import {
   Star,
   Zap,
   Activity,
+  Eye,
+  Target,
+  ArrowUp,
+  ArrowDown,
 } from 'lucide-react';
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const Dashboard = () => {
-  // Stats data - All zeros by default
+  const [timeRange, setTimeRange] = useState('7d');
+
+  // Stats data with mini chart data
   const stats = [
     {
       title: 'Total Revenue',
-      value: '$0',
-      change: '0%',
+      value: '$45,231',
+      change: '+20.1%',
       subtext: 'from last month',
       isPositive: true,
       icon: DollarSign,
-      bgGradient: 'from-blue-500 via-blue-600 to-indigo-600',
-      lightBg: 'from-blue-50 via-indigo-50 to-blue-100',
-      borderColor: 'border-blue-300',
-      textColor: 'text-blue-700',
-      accentColor: 'bg-blue-500',
+      chartData: [
+        { value: 20 }, { value: 35 }, { value: 28 }, { value: 45 }, 
+        { value: 38 }, { value: 52 }, { value: 48 }, { value: 65 }
+      ],
+      color: '#3b82f6',
+      lightColor: '#dbeafe',
+      bgColor: 'bg-blue-50/50',
     },
     {
       title: 'Total Orders',
-      value: '0',
-      change: '0%',
+      value: '2,845',
+      change: '+12.5%',
       subtext: 'from last month',
       isPositive: true,
       icon: ShoppingBag,
-      bgGradient: 'from-emerald-500 via-green-600 to-teal-600',
-      lightBg: 'from-emerald-50 via-green-50 to-emerald-100',
-      borderColor: 'border-emerald-300',
-      textColor: 'text-emerald-700',
-      accentColor: 'bg-emerald-500',
+      chartData: [
+        { value: 30 }, { value: 40 }, { value: 35 }, { value: 50 }, 
+        { value: 45 }, { value: 55 }, { value: 60 }, { value: 58 }
+      ],
+      color: '#10b981',
+      lightColor: '#d1fae5',
+      bgColor: 'bg-emerald-50/50',
     },
     {
       title: 'Total Products',
-      value: '0',
-      change: '0%',
+      value: '1,234',
+      change: '+8.2%',
       subtext: 'active products',
-      isPositive: false,
+      isPositive: true,
       icon: Package,
-      bgGradient: 'from-purple-500 via-violet-600 to-purple-600',
-      lightBg: 'from-purple-50 via-violet-50 to-purple-100',
-      borderColor: 'border-purple-300',
-      textColor: 'text-purple-700',
-      accentColor: 'bg-purple-500',
+      chartData: [
+        { value: 25 }, { value: 30 }, { value: 28 }, { value: 35 }, 
+        { value: 40 }, { value: 38 }, { value: 45 }, { value: 42 }
+      ],
+      color: '#8b5cf6',
+      lightColor: '#ede9fe',
+      bgColor: 'bg-violet-50/50',
     },
     {
       title: 'Total Customers',
-      value: '0',
-      change: '0%',
+      value: '8,462',
+      change: '+15.3%',
       subtext: 'registered users',
       isPositive: true,
       icon: Users,
-      bgGradient: 'from-orange-500 via-amber-600 to-orange-600',
-      lightBg: 'from-orange-50 via-amber-50 to-orange-100',
-      borderColor: 'border-orange-300',
-      textColor: 'text-orange-700',
-      accentColor: 'bg-orange-500',
+      chartData: [
+        { value: 35 }, { value: 40 }, { value: 45 }, { value: 48 }, 
+        { value: 50 }, { value: 55 }, { value: 58 }, { value: 62 }
+      ],
+      color: '#f59e0b',
+      lightColor: '#fef3c7',
+      bgColor: 'bg-amber-50/50',
     },
+  ];
+
+  // Revenue data for chart
+  const revenueData = [
+    { name: 'Jan', revenue: 12000, orders: 450, customers: 280 },
+    { name: 'Feb', revenue: 19000, orders: 680, customers: 420 },
+    { name: 'Mar', revenue: 15000, orders: 590, customers: 350 },
+    { name: 'Apr', revenue: 25000, orders: 820, customers: 580 },
+    { name: 'May', revenue: 22000, orders: 750, customers: 520 },
+    { name: 'Jun', revenue: 30000, orders: 980, customers: 680 },
+    { name: 'Jul', revenue: 35000, orders: 1120, customers: 790 },
+  ];
+
+  // Sales by category
+  const categoryData = [
+    { name: 'Electronics', value: 35, color: '#3b82f6' },
+    { name: 'Fashion', value: 25, color: '#ec4899' },
+    { name: 'Home', value: 20, color: '#10b981' },
+    { name: 'Sports', value: 12, color: '#f59e0b' },
+    { name: 'Books', value: 8, color: '#8b5cf6' },
+  ];
+
+  // Top products data
+  const topProducts = [
+    { name: 'Wireless Headphones', sales: 1245, revenue: '$24,890', trend: '+12%', color: '#3b82f6' },
+    { name: 'Smart Watch Pro', sales: 982, revenue: '$19,640', trend: '+8%', color: '#8b5cf6' },
+    { name: 'Laptop Stand', sales: 856, revenue: '$8,560', trend: '+15%', color: '#10b981' },
+    { name: 'USB-C Hub', sales: 742, revenue: '$7,420', trend: '+5%', color: '#f59e0b' },
+    { name: 'Mechanical Keyboard', sales: 634, revenue: '$12,680', trend: '+10%', color: '#ec4899' },
   ];
 
   // Order status data
   const orderStatus = [
-    { label: 'Pending', count: 0, icon: Clock, gradient: 'from-yellow-400 to-amber-500', bg: 'from-yellow-50 to-amber-50', border: 'border-yellow-300', text: 'text-yellow-700' },
-    { label: 'Processing', count: 0, icon: Truck, gradient: 'from-blue-400 to-cyan-500', bg: 'from-blue-50 to-cyan-50', border: 'border-blue-300', text: 'text-blue-700' },
-    { label: 'Completed', count: 0, icon: CheckCircle, gradient: 'from-green-400 to-emerald-500', bg: 'from-green-50 to-emerald-50', border: 'border-green-300', text: 'text-green-700' },
-    { label: 'Cancelled', count: 0, icon: XCircle, gradient: 'from-red-400 to-rose-500', bg: 'from-red-50 to-rose-50', border: 'border-red-300', text: 'text-red-700' },
+    { label: 'Pending', count: 145, icon: Clock, color: '#f59e0b', bgColor: 'bg-amber-50/50' },
+    { label: 'Processing', count: 289, icon: Truck, color: '#3b82f6', bgColor: 'bg-blue-50/50' },
+    { label: 'Completed', count: 2234, icon: CheckCircle, color: '#10b981', bgColor: 'bg-emerald-50/50' },
+    { label: 'Cancelled', count: 177, icon: XCircle, color: '#ef4444', bgColor: 'bg-red-50/50' },
   ];
 
-  // Recent orders - Empty by default
-  const recentOrders = [];
+  // Recent orders
+  const recentOrders = [
+    { id: '#ORD-2401', customer: 'John Doe', amount: '$234.00', status: 'Completed', statusColor: 'bg-emerald-50 text-emerald-700 border border-emerald-200', time: '2 min ago' },
+    { id: '#ORD-2402', customer: 'Jane Smith', amount: '$145.50', status: 'Processing', statusColor: 'bg-blue-50 text-blue-700 border border-blue-200', time: '15 min ago' },
+    { id: '#ORD-2403', customer: 'Mike Johnson', amount: '$567.80', status: 'Pending', statusColor: 'bg-amber-50 text-amber-700 border border-amber-200', time: '1 hour ago' },
+    { id: '#ORD-2404', customer: 'Sarah Wilson', amount: '$89.99', status: 'Completed', statusColor: 'bg-emerald-50 text-emerald-700 border border-emerald-200', time: '2 hours ago' },
+  ];
 
-  // Low stock products - Empty by default
-  const lowStockProducts = [];
+  // Low stock products
+  const lowStockProducts = [
+    { name: 'iPhone 14 Pro', category: 'Electronics', stock: 5, sku: 'ELEC-001' },
+    { name: 'Nike Air Max', category: 'Fashion', stock: 8, sku: 'FASH-102' },
+    { name: 'Gaming Mouse', category: 'Electronics', stock: 3, sku: 'ELEC-045' },
+  ];
+
+  // Traffic sources
+  const trafficData = [
+    { source: 'Direct', visits: 4250, color: '#3b82f6' },
+    { source: 'Social', visits: 3180, color: '#ec4899' },
+    { source: 'Search', visits: 2890, color: '#10b981' },
+    { source: 'Referral', visits: 1560, color: '#f59e0b' },
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* Page Header with Animated Gradient */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-red-500 via-pink-500 to-red-600 rounded-2xl p-8 shadow-2xl">
-        <div className="absolute inset-0 bg-black opacity-5"></div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-              <Activity className="text-white" size={24} strokeWidth={2.5} />
-            </div>
-            <h2 className="text-4xl font-black text-white tracking-tight">Dashboard</h2>
-          </div>
-          <p className="text-white/90 text-lg font-medium">Welcome back! Here's your store overview</p>
-          <div className="mt-4 flex items-center gap-2">
-            <div className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full">
-              <span className="text-white text-sm font-semibold">Live Updates</span>
-            </div>
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          </div>
+    <div className="space-y-6 bg-gray-50 p-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">Dashboard</h1>
+          <p className="text-gray-500">Welcome back! Here's your store overview</p>
+        </div>
+        <div className="flex gap-2">
+          {['24h', '7d', '30d', '1y'].map((range) => (
+            <button
+              key={range}
+              onClick={() => setTimeRange(range)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                timeRange === range
+                  ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
+                  : 'text-gray-600 hover:bg-white/50'
+              }`}
+            >
+              {range}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Stats Grid with Enhanced Design */}
+      {/* Stats Grid with Mini Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
             <div
               key={index}
-              className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+              className={`${stat.bgColor} border border-gray-200/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group`}
             >
-              {/* Animated Background Gradient */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.lightBg} opacity-60`}></div>
-              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.bgGradient} opacity-10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500`}></div>
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-2.5 bg-white rounded-xl shadow-sm">
+                  <Icon size={20} style={{ color: stat.color }} strokeWidth={2} />
+                </div>
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${stat.isPositive ? 'bg-emerald-50 border border-emerald-200' : 'bg-red-50 border border-red-200'}`}>
+                  {stat.isPositive ? <ArrowUp size={12} className="text-emerald-600" /> : <ArrowDown size={12} className="text-red-600" />}
+                  <span className={`text-xs font-semibold ${stat.isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
+                    {stat.change}
+                  </span>
+                </div>
+              </div>
               
-              {/* Border Effect */}
-              <div className={`absolute inset-0 border-2 ${stat.borderColor} rounded-2xl`}></div>
-              
-              <div className="relative p-6 z-10">
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 bg-gradient-to-br ${stat.bgGradient} rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon className="text-white" size={28} strokeWidth={2.5} />
-                  </div>
-                  <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${stat.isPositive ? 'bg-green-100' : 'bg-red-100'}`}>
-                    {stat.isPositive ? <TrendingUp size={14} className="text-green-600" /> : <TrendingDown size={14} className="text-red-600" />}
-                    <span className={`text-xs font-bold ${stat.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                      {stat.change}
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-gray-600 text-sm font-semibold mb-2">{stat.title}</p>
-                  <p className={`text-4xl font-black ${stat.textColor} mb-1`}>{stat.value}</p>
-                  <p className="text-xs text-gray-500 font-medium">{stat.subtext}</p>
-                </div>
-                {/* Animated Bar */}
-                <div className="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
-                  <div className={`h-full ${stat.accentColor} rounded-full w-0 group-hover:w-full transition-all duration-1000`}></div>
-                </div>
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 font-medium mb-1">{stat.title}</p>
+                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-xs text-gray-500 mt-1">{stat.subtext}</p>
+              </div>
+
+              {/* Mini Chart */}
+              <div className="h-12 -mx-2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={stat.chartData}>
+                    <defs>
+                      <linearGradient id={`gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={stat.color} stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor={stat.color} stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <Area 
+                      type="monotone" 
+                      dataKey="value" 
+                      stroke={stat.color}
+                      strokeWidth={2}
+                      fillOpacity={1} 
+                      fill={`url(#gradient-${index})`} 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Order Status Overview with Modern Cards */}
-      <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-8">
+      {/* Revenue Chart */}
+      <div className="bg-white border border-gray-200/50 rounded-2xl p-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">Revenue Overview</h3>
+            <p className="text-sm text-gray-500">Track your revenue performance</p>
+          </div>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 bg-gray-50 text-gray-700 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-100">Revenue</button>
+            <button className="px-4 py-2 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50">Orders</button>
+            <button className="px-4 py-2 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50">Customers</button>
+          </div>
+        </div>
+        <ResponsiveContainer width="100%" height={320}>
+          <AreaChart data={revenueData}>
+            <defs>
+              <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+            <XAxis 
+              dataKey="name" 
+              stroke="#9ca3af" 
+              style={{ fontSize: '12px', fontWeight: '500' }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis 
+              stroke="#9ca3af" 
+              style={{ fontSize: '12px', fontWeight: '500' }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #e5e7eb', 
+                borderRadius: '12px',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+              }} 
+            />
+            <Area 
+              type="monotone" 
+              dataKey="revenue" 
+              stroke="#3b82f6" 
+              strokeWidth={2.5}
+              fillOpacity={1} 
+              fill="url(#colorRevenue)" 
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Order Status & Sales by Category */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Order Status */}
+        <div className="bg-white border border-gray-200/50 rounded-2xl p-8">
+          <div className="mb-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-1">Order Status</h3>
+            <p className="text-sm text-gray-500">Current order distribution</p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {orderStatus.map((status, index) => {
+              const Icon = status.icon;
+              return (
+                <div key={index} className={`${status.bgColor} border border-gray-200/50 rounded-xl p-5 hover:shadow-md transition-all`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Icon size={18} style={{ color: status.color }} strokeWidth={2} />
+                    </div>
+                    <p className="text-sm font-medium text-gray-700">{status.label}</p>
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900">{status.count}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Sales by Category */}
+        <div className="bg-white border border-gray-200/50 rounded-2xl p-8">
+          <div className="mb-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-1">Sales by Category</h3>
+            <p className="text-sm text-gray-500">Product category distribution</p>
+          </div>
+          <div className="flex items-center justify-center mb-4">
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={3}
+                  dataKey="value"
+                >
+                  {categoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {categoryData.map((cat, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }}></div>
+                <span className="text-sm font-medium text-gray-700">{cat.name}</span>
+                <span className="text-xs text-gray-500 ml-auto font-semibold">{cat.value}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Top Products */}
+      <div className="bg-white border border-gray-200/50 rounded-2xl p-8">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-black text-gray-900 flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg shadow-lg">
-              <ShoppingCart size={24} className="text-white" strokeWidth={2.5} />
-            </div>
-            Order Status Overview
-          </h3>
-          <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-lg font-semibold text-sm hover:shadow-lg transition-all duration-200">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">Top Selling Products</h3>
+            <p className="text-sm text-gray-500">Best performers this month</p>
+          </div>
+          <button className="flex items-center gap-2 px-4 py-2 text-gray-700 text-sm font-medium hover:bg-gray-50 rounded-lg border border-gray-200">
             View All <ArrowUpRight size={16} />
           </button>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {orderStatus.map((status, index) => {
-            const Icon = status.icon;
-            return (
-              <div key={index} className="group relative overflow-hidden bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div className={`absolute inset-0 bg-gradient-to-br ${status.bg} opacity-80`}></div>
-                <div className="relative p-5 z-10">
-                  <div className={`inline-flex p-3 bg-gradient-to-br ${status.gradient} rounded-xl shadow-lg mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon className="text-white" size={24} strokeWidth={2.5} />
-                  </div>
-                  <p className="text-sm font-bold text-gray-700 mb-1">{status.label}</p>
-                  <p className={`text-3xl font-black ${status.text}`}>{status.count}</p>
-                  <div className="mt-3 h-1 bg-gray-200 rounded-full overflow-hidden">
-                    <div className={`h-full bg-gradient-to-r ${status.gradient} w-0 group-hover:w-full transition-all duration-700`}></div>
-                  </div>
+        <div className="space-y-3">
+          {topProducts.map((product, index) => (
+            <div key={index} className="flex items-center justify-between p-4 bg-gray-50/50 rounded-xl border border-gray-200/50 hover:shadow-sm transition-all">
+              <div className="flex items-center gap-4 flex-1">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${product.color}15` }}>
+                  <Package size={20} style={{ color: product.color }} strokeWidth={2} />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">{product.name}</p>
+                  <p className="text-xs text-gray-500">{product.sales} units sold</p>
                 </div>
               </div>
-            );
-          })}
+              <div className="text-right">
+                <p className="font-bold text-gray-900">{product.revenue}</p>
+                <span className="text-xs px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-medium border border-emerald-200">
+                  {product.trend}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Recent Orders & Low Stock Grid */}
+      {/* Recent Orders & Low Stock */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
-        <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6 hover:shadow-2xl transition-shadow duration-300">
+        <div className="bg-white border border-gray-200/50 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg shadow-lg">
-                <ShoppingBag size={20} className="text-white" strokeWidth={2.5} />
-              </div>
-              Recent Orders
-            </h3>
-            <Zap size={18} className="text-yellow-500" />
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Recent Orders</h3>
+              <p className="text-sm text-gray-500">Latest transactions</p>
+            </div>
           </div>
-          {recentOrders.length === 0 ? (
-            <div className="text-center py-16 relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 opacity-50 rounded-xl"></div>
-              <div className="relative z-10">
-                <div className="inline-flex p-4 bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl mb-4 shadow-inner">
-                  <ShoppingBag size={48} className="text-gray-400" strokeWidth={1.5} />
+          <div className="space-y-3">
+            {recentOrders.map((order, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-50/50 rounded-xl border border-gray-200/50">
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">{order.id}</p>
+                  <p className="text-xs text-gray-600">{order.customer}</p>
+                  <p className="text-xs text-gray-400 mt-1">{order.time}</p>
                 </div>
-                <p className="text-gray-700 font-bold text-lg mb-1">No orders yet</p>
-                <p className="text-gray-500 text-sm">Orders will appear here once placed</p>
-                <button className="mt-4 px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold text-sm hover:shadow-lg transition-all duration-200">
-                  Create Test Order
-                </button>
+                <div className="text-right">
+                  <p className="font-bold text-gray-900 mb-1">{order.amount}</p>
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${order.statusColor}`}>
+                    {order.status}
+                  </span>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {recentOrders.map((order, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-gray-200 hover:shadow-md transition-all">
-                  <div>
-                    <p className="font-black text-gray-900">{order.id}</p>
-                    <p className="text-sm text-gray-600 font-medium">{order.customer}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-black text-gray-900">{order.amount}</p>
-                    <span className={`text-xs px-3 py-1 rounded-full font-semibold ${order.statusColor}`}>
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
 
         {/* Low Stock Products */}
-        <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6 hover:shadow-2xl transition-shadow duration-300">
+        <div className="bg-white border border-gray-200/50 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg shadow-lg animate-pulse">
-                <AlertCircle size={20} className="text-white" strokeWidth={2.5} />
-              </div>
-              Low Stock Alert
-            </h3>
-            <Star size={18} className="text-amber-500" />
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Low Stock Alert</h3>
+              <p className="text-sm text-gray-500">Items need restocking</p>
+            </div>
           </div>
-          {lowStockProducts.length === 0 ? (
-            <div className="text-center py-16 relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-100 opacity-50 rounded-xl"></div>
-              <div className="relative z-10">
-                <div className="inline-flex p-4 bg-gradient-to-br from-green-200 to-emerald-300 rounded-2xl mb-4 shadow-inner">
-                  <Package size={48} className="text-green-600" strokeWidth={1.5} />
+          <div className="space-y-3">
+            {lowStockProducts.map((product, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-red-50/30 rounded-xl border border-red-200/50">
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">{product.name}</p>
+                  <p className="text-xs text-gray-600">{product.category}</p>
+                  <p className="text-xs text-gray-400 mt-1">SKU: {product.sku}</p>
                 </div>
-                <p className="text-gray-700 font-bold text-lg mb-1">All products in stock</p>
-                <p className="text-gray-500 text-sm">Low stock items will appear here</p>
-                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold text-sm">
-                  <CheckCircle size={16} />
-                  <span>Everything looks good!</span>
+                <div className="text-right">
+                  <p className="font-bold text-red-600 mb-1">{product.stock} left</p>
+                  <button className="text-xs text-red-600 hover:text-red-700 font-medium">Restock</button>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {lowStockProducts.map((product, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-br from-red-50 to-pink-100 rounded-xl border-2 border-red-200 hover:shadow-md transition-all">
-                  <div>
-                    <p className="font-black text-gray-900">{product.name}</p>
-                    <p className="text-sm text-gray-600 font-medium">{product.category}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-black text-red-600">{product.stock} left</p>
-                    <button className="text-xs text-red-600 hover:text-red-800 font-bold hover:underline">Restock Now</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Quick Actions with Enhanced Styling */}
-      <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl border-2 border-gray-100 p-8">
-        <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
-          <Zap className="text-yellow-500" size={28} strokeWidth={2.5} />
-          Quick Actions
-        </h3>
+      {/* Traffic Sources */}
+      <div className="bg-white border border-gray-200/50 rounded-2xl p-8">
+        <div className="mb-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-1">Traffic Sources</h3>
+          <p className="text-sm text-gray-500">Where your visitors come from</p>
+        </div>
+        <ResponsiveContainer width="100%" height={280}>
+          <BarChart data={trafficData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+            <XAxis 
+              dataKey="source" 
+              stroke="#9ca3af" 
+              style={{ fontSize: '12px', fontWeight: '500' }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis 
+              stroke="#9ca3af" 
+              style={{ fontSize: '12px', fontWeight: '500' }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #e5e7eb', 
+                borderRadius: '12px',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+              }} 
+            />
+            <Bar dataKey="visits" radius={[8, 8, 0, 0]} barSize={60}>
+              {trafficData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white border border-gray-200/50 rounded-2xl p-8">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <button className="group relative overflow-hidden flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-200 rounded-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <Package className="text-white" size={28} strokeWidth={2.5} />
+          <button className="flex flex-col items-center gap-3 p-6 bg-blue-50/50 border border-blue-200/50 rounded-xl hover:shadow-md transition-all">
+            <div className="p-3 bg-white rounded-xl shadow-sm">
+              <Package size={24} className="text-blue-600" strokeWidth={2} />
             </div>
-            <span className="text-sm font-black text-blue-900 relative z-10">Add Product</span>
+            <span className="text-sm font-semibold text-gray-900">Add Product</span>
           </button>
-          <button className="group relative overflow-hidden flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-200 rounded-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-            <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <ShoppingBag className="text-white" size={28} strokeWidth={2.5} />
+          <button className="flex flex-col items-center gap-3 p-6 bg-emerald-50/50 border border-emerald-200/50 rounded-xl hover:shadow-md transition-all">
+            <div className="p-3 bg-white rounded-xl shadow-sm">
+              <ShoppingBag size={24} className="text-emerald-600" strokeWidth={2} />
             </div>
-            <span className="text-sm font-black text-green-900 relative z-10">View Orders</span>
+            <span className="text-sm font-semibold text-gray-900">View Orders</span>
           </button>
-          <button className="group relative overflow-hidden flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-purple-50 to-violet-100 border-2 border-purple-200 rounded-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-violet-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-            <div className="p-3 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <Users className="text-white" size={28} strokeWidth={2.5} />
+          <button className="flex flex-col items-center gap-3 p-6 bg-violet-50/50 border border-violet-200/50 rounded-xl hover:shadow-md transition-all">
+            <div className="p-3 bg-white rounded-xl shadow-sm">
+              <Users size={24} className="text-violet-600" strokeWidth={2} />
             </div>
-            <span className="text-sm font-black text-purple-900 relative z-10">Customers</span>
+            <span className="text-sm font-semibold text-gray-900">Customers</span>
           </button>
-          <button className="group relative overflow-hidden flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-orange-50 to-amber-100 border-2 border-orange-200 rounded-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-amber-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-            <div className="p-3 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <TrendingUp className="text-white" size={28} strokeWidth={2.5} />
+          <button className="flex flex-col items-center gap-3 p-6 bg-amber-50/50 border border-amber-200/50 rounded-xl hover:shadow-md transition-all">
+            <div className="p-3 bg-white rounded-xl shadow-sm">
+              <TrendingUp size={24} className="text-amber-600" strokeWidth={2} />
             </div>
-            <span className="text-sm font-black text-orange-900 relative z-10">Analytics</span>
+            <span className="text-sm font-semibold text-gray-900">Analytics</span>
           </button>
         </div>
       </div>
