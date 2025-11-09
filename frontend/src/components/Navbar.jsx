@@ -18,7 +18,7 @@ import {
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, login, register, logout, isAuthenticated , wishlistCount} = useAuth();
+  const { user, login, register, logout, isAuthenticated, wishlistCount } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -67,22 +67,17 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-white text-gray-900 sticky top-0 z-40 shadow-md">
+      <nav className="bg-[#0a1931] text-white sticky top-0 z-40 shadow-lg">
         {/* Top Bar */}
-        <div className="border-b border-gray-200">
+        <div className="border-b border-blue-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
-              <div className="relative">
-                <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300 border-2 border-gray-900">
-                  <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={2.5} />
-                </div>
-              </div>
               <div>
-                <span className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-gray-900 group-hover:text-red-600 transition-all duration-300">
-                  SHOP<span className="text-red-600">MART</span>
+                <span className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white group-hover:text-[#ffc947] transition-all duration-300">
+                  OUTFIT<span className="text-[#ffc947]">HUB.</span>
                 </span>
-                <div className="text-xs text-gray-500 tracking-widest -mt-1 hidden sm:block group-hover:text-red-600 transition-colors duration-300">
+                <div className="text-xs text-blue-200 tracking-widest -mt-1 hidden sm:block group-hover:text-[#ffc947] transition-colors duration-300">
                   YOUR SHOPPING DESTINATION
                 </div>
               </div>
@@ -92,56 +87,56 @@ const Navbar = () => {
             <div className="hidden lg:flex items-center flex-1 max-w-md mx-8">
               <div className="relative w-full">
                 <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300"
                   size={18}
                 />
                 <input
                   type="text"
                   placeholder="Search products..."
-                  className="w-full bg-gray-50 border border-gray-300 rounded-full pl-10 pr-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
+                  className="w-full bg-blue-950 border border-blue-800 rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-[#ffc947] focus:ring-2 focus:ring-[#ffc947]/30 transition"
                 />
               </div>
             </div>
 
             {/* Right Side - Actions */}
             <div className="flex items-center gap-2 sm:gap-4">
-              {/* Wishlist - Hidden on small mobile */}
+              {/* Wishlist */}
               <Link
                 to="/wishlist"
-                className="hidden sm:block relative p-2 hover:bg-gray-100 rounded-full transition"
+                className="hidden sm:block relative p-2 hover:bg-blue-900 rounded-full transition"
               >
-                <Heart size={20} className="text-gray-700" />
-                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                <Heart size={20} className="text-white" />
+                <span className="absolute -top-1 -right-1 bg-[#ffc947] text-[#0a1931] text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
                   {wishlistCount || 0}
                 </span>
               </Link>
 
               <Link
                 to="/cart"
-                className="relative p-2 hover:bg-gray-100 rounded-full transition"
+                className="relative p-2 hover:bg-blue-900 rounded-full transition"
               >
-                <ShoppingCart size={20} className="text-gray-700" />
-                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                <ShoppingCart size={20} className="text-white" />
+                <span className="absolute -top-1 -right-1 bg-[#ffc947] text-[#0a1931] text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
                   0
                 </span>
               </Link>
 
               {/* Divider */}
-              <div className="w-px h-6 bg-gray-300"></div>
+              <div className="w-px h-6 bg-blue-800"></div>
 
               {/* User Menu */}
               {isAuthenticated ? (
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition"
+                    className="flex items-center gap-2 p-2 rounded-full hover:bg-blue-900 transition"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                    <div className="w-8 h-8 bg-[#ffc947] rounded-full flex items-center justify-center text-[#0a1931] font-bold text-sm shadow-lg">
                       {user.name.charAt(0).toUpperCase()}
                     </div>
                     <ChevronDown
                       size={14}
-                      className={`text-gray-600 transition-transform hidden sm:block ${
+                      className={`text-gray-300 transition-transform hidden sm:block ${
                         showUserMenu ? "rotate-180" : ""
                       }`}
                     />
@@ -149,7 +144,7 @@ const Navbar = () => {
 
                   {/* Dropdown Menu */}
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-200 py-1">
+                    <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-xl shadow-2xl border border-gray-200 py-1">
                       <div className="px-3 py-2 border-b border-gray-200">
                         <p className="text-xs text-gray-500">Signed in as</p>
                         <p className="font-semibold text-sm text-gray-900 truncate">
@@ -180,7 +175,7 @@ const Navbar = () => {
               ) : (
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-red-600 transition text-sm font-medium"
+                  className="flex items-center gap-2 text-white hover:text-[#ffc947] transition text-sm font-medium"
                 >
                   <User size={18} />
                   <span className="hidden sm:inline">Sign In</span>
@@ -190,92 +185,49 @@ const Navbar = () => {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-full transition ml-2"
+                className="lg:hidden p-2 hover:bg-blue-900 rounded-full transition ml-2"
               >
-                <Menu size={20} className="text-gray-700" />
+                <Menu size={20} className="text-white" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Desktop Menu Bar - Hidden on mobile */}
-        <div className="hidden lg:block bg-gray-50 border-t border-gray-200">
+        {/* Desktop Menu Bar */}
+        <div className="hidden lg:block bg-blue-950 border-t border-blue-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-center gap-1">
-              <Link
-                to="/"
-                className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
-                  isActive("/")
-                    ? "text-red-600"
-                    : "text-gray-700 hover:text-red-600"
-                }`}
-              >
-                <span>HOME</span>
-                <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
-                    isActive("/") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+              {[
+                { path: "/", label: "HOME" },
+                { path: "/men", label: "MEN" },
+                { path: "/women", label: "WOMEN" },
+                { path: "/kids", label: "KIDS" },
+              ].map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`px-5 py-3 text-sm font-semibold transition relative group ${
+                    isActive(item.path)
+                      ? "text-[#ffc947]"
+                      : "text-white hover:text-[#ffc947]"
                   }`}
-                ></div>
-              </Link>
-              <Link
-                to="/men"
-                className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
-                  isActive("/men")
-                    ? "text-red-600"
-                    : "text-gray-700 hover:text-red-600"
-                }`}
-              >
-                <span>MEN</span>
-                <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
-                    isActive("/men") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                ></div>
-              </Link>
-              <Link
-                to="/women"
-                className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
-                  isActive("/women")
-                    ? "text-red-600"
-                    : "text-gray-700 hover:text-red-600"
-                }`}
-              >
-                <span>WOMEN</span>
-                <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
-                    isActive("/women") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                ></div>
-              </Link>
-              <Link
-                to="/kids"
-                className={`px-5 py-3 text-sm font-semibold transition whitespace-nowrap relative group ${
-                  isActive("/kids")
-                    ? "text-red-600"
-                    : "text-gray-700 hover:text-red-600"
-                }`}
-              >
-                <span>KIDS</span>
-                <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
-                    isActive("/kids") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                ></div>
-              </Link>
+                >
+                  <span>{item.label}</span>
+                  <div
+                    className={`absolute bottom-0 left-0 w-full h-0.5 bg-[#ffc947] transform transition ${
+                      isActive(item.path)
+                        ? "scale-x-100"
+                        : "scale-x-0 group-hover:scale-x-100"
+                    }`}
+                  ></div>
+                </Link>
+              ))}
+
               <Link
                 to="/sale"
-                className={`px-5 py-3 text-sm font-bold transition whitespace-nowrap relative group ${
-                  isActive("/sale")
-                    ? "text-red-600"
-                    : "text-red-600"
-                }`}
+                className={`px-5 py-3 text-sm font-bold transition relative group text-[#ffc947]`}
               >
                 <span>SALE 🔥</span>
-                <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-red-600 transform transition ${
-                    isActive("/sale") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                ></div>
               </Link>
             </div>
           </div>
@@ -283,74 +235,26 @@ const Navbar = () => {
 
         {/* Mobile Menu Dropdown */}
         {showMobileMenu && (
-          <div className="lg:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="lg:hidden bg-[#0a1931] border-t border-blue-800 shadow-lg">
             <div className="px-4 py-2 space-y-1">
-              <Link
-                to="/"
-                className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
-                  isActive("/")
-                    ? "text-red-600 bg-red-50"
-                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
-                }`}
-                onClick={() => setShowMobileMenu(false)}
-              >
-                HOME
-              </Link>
-              <Link
-                to="/products"
-                className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
-                  isActive("/products")
-                    ? "text-red-600 bg-red-50"
-                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
-                }`}
-                onClick={() => setShowMobileMenu(false)}
-              >
-                NEW ARRIVALS
-              </Link>
-              <Link
-                to="/men"
-                className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
-                  isActive("/men")
-                    ? "text-red-600 bg-red-50"
-                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
-                }`}
-                onClick={() => setShowMobileMenu(false)}
-              >
-                MEN
-              </Link>
-              <Link
-                to="/women"
-                className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
-                  isActive("/women")
-                    ? "text-red-600 bg-red-50"
-                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
-                }`}
-                onClick={() => setShowMobileMenu(false)}
-              >
-                WOMEN
-              </Link>
-              <Link
-                to="/kids"
-                className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
-                  isActive("/kids")
-                    ? "text-red-600 bg-red-50"
-                    : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
-                }`}
-                onClick={() => setShowMobileMenu(false)}
-              >
-                KIDS
-              </Link>
-              <Link
-                to="/sale"
-                className={`block px-4 py-3 rounded-lg text-sm font-bold transition ${
-                  isActive("/sale")
-                    ? "text-red-600 bg-red-50"
-                    : "text-red-600 hover:bg-red-50"
-                }`}
-                onClick={() => setShowMobileMenu(false)}
-              >
-                SALE 🔥
-              </Link>
+              {["/", "/men", "/women", "/kids", "/sale"].map((path, idx) => (
+                <Link
+                  key={path}
+                  to={path}
+                  className={`block px-4 py-3 rounded-lg text-sm font-semibold transition ${
+                    isActive(path)
+                      ? "text-[#ffc947] bg-blue-900"
+                      : "text-white hover:text-[#ffc947] hover:bg-blue-900"
+                  }`}
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  {path === "/"
+                    ? "HOME"
+                    : path === "/sale"
+                    ? "SALE 🔥"
+                    : path.substring(1).toUpperCase()}
+                </Link>
+              ))}
             </div>
           </div>
         )}
@@ -368,7 +272,7 @@ const Navbar = () => {
             </button>
 
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">
+              <h2 className="text-2xl font-bold text-[#0a1931] mb-1">
                 {isLogin ? "Welcome Back" : "Create Account"}
               </h2>
               <p className="text-gray-500 text-sm">
@@ -384,7 +288,7 @@ const Navbar = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-[#0a1931] focus:ring-2 focus:ring-[#0a1931]/30 transition"
                     placeholder="Full Name"
                     required
                   />
@@ -397,7 +301,7 @@ const Navbar = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-[#0a1931] focus:ring-2 focus:ring-[#0a1931]/30 transition"
                   placeholder="Email"
                   required
                 />
@@ -409,7 +313,7 @@ const Navbar = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
+                  className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-[#0a1931] focus:ring-2 focus:ring-[#0a1931]/30 transition"
                   placeholder="Password"
                   required
                 />
@@ -429,7 +333,7 @@ const Navbar = () => {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-[#0a1931] focus:ring-2 focus:ring-[#0a1931]/30 transition"
                     placeholder="Confirm Password"
                     required
                   />
@@ -451,7 +355,7 @@ const Navbar = () => {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-2.5 rounded-lg font-semibold text-sm hover:shadow-lg hover:from-red-600 hover:to-red-700 transition"
+                className="w-full bg-[#0a1931] text-[#ffc947] py-2.5 rounded-lg font-semibold text-sm hover:shadow-lg hover:bg-blue-950 transition"
               >
                 {isLogin ? "Sign In" : "Create Account"}
               </button>
@@ -463,12 +367,12 @@ const Navbar = () => {
                   setIsLogin(!isLogin);
                   setError("");
                 }}
-                className="text-gray-600 hover:text-gray-900 text-sm transition"
+                className="text-gray-600 hover:text-[#0a1931] text-sm transition"
               >
                 {isLogin
                   ? "Don't have an account? "
                   : "Already have an account? "}
-                <span className="text-red-600 font-semibold">
+                <span className="text-[#0a1931] font-semibold">
                   {isLogin ? "Sign up" : "Sign in"}
                 </span>
               </button>
