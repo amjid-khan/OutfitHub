@@ -455,7 +455,7 @@ const Men = () => {
                   </div>
                 );
               })}
-            </div>
+            </div> 
           )}
         </div>
       </div>

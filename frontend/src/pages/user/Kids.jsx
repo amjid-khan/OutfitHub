@@ -1,37 +1,83 @@
 import React, { useEffect, useState } from "react";
-import { Search, Heart, ShoppingBag } from "lucide-react";
-import { useAuth } from "../../context/AuthContext"; // make sure this provides getAllProducts()
+import {
+  Heart,
+  ShoppingBag,
+  Zap,
+  Eye,
+  Filter,
+} from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Kids = () => {
-  const { getAllProducts } = useAuth();
+  const navigate = useNavigate();
+  const { getAllProducts, addToCart, user, getWishlist, toggleWishlist } =
+    useAuth();
+
   const [allProducts, setAllProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Shoes");
-  const [hoveredProduct, setHoveredProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [wishlist, setWishlist] = useState([]);
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const categories = [
-    { id: 1, name: "Shoes" },
-    { id: 2, name: "Shirts" },
-    { id: 3, name: "Pants" },
-    { id: 4, name: "Glasses" },
-    { id: 5, name: "Perfumes" },
-    { id: 6, name: "Watches" },
-    { id: 7, name: "Jackets" },
-    { id: 8, name: "Accessories" },
+    {
+      id: 1,
+      name: "Shoes",
+      image:
+        "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=400&fit=crop",
+    },
+    {
+      id: 2,
+      name: "Shirts",
+      image:
+        "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=400&h=400&fit=crop",
+    },
+    {
+      id: 3,
+      name: "Pants",
+      image:
+        "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&h=400&fit=crop",
+    },
+    {
+      id: 4,
+      name: "Glasses",
+      image:
+        "https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=400&h=400&fit=crop",
+    },
+    {
+      id: 5,
+      name: "Perfumes",
+      image:
+        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop",
+    },
+    {
+      id: 6,
+      name: "Watches",
+      image:
+        "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop",
+    },
+    {
+      id: 7,
+      name: "Jackets",
+      image:
+        "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=400&fit=crop",
+    },
+    {
+      id: 8,
+      name: "Accessories",
+      image:
+        "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400&h=400&fit=crop",
+    },
   ];
 
-  // 🔹 Fetch products from backend
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const data = await getAllProducts();
-        // ✅ Filter only Kids category
-        const kidsProducts = data.filter(
-          (item) => item.mainCategory === "Kids"
-        );
+        const kidsProducts = data.filter((item) => item.mainCategory === "Kids");
         setAllProducts(kidsProducts);
       } catch (err) {
         console.error("Error fetching kids products:", err);
@@ -42,153 +88,375 @@ const Kids = () => {
     fetchProducts();
   }, [getAllProducts]);
 
-  // 🔹 Filter by selected subcategory
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (user) {
+        try {
+          const wishlistData = await getWishlist();
+          const items = Array.isArray(wishlistData)
+            ? wishlistData
+            : wishlistData?.wishlist || [];
+          const normalized = items.map((item) =>
+            typeof item === "string" ? item : item._id
+          );
+          setWishlist(normalized);
+        } catch (error) {
+          console.error("Error loading wishlist:", error);
+          setWishlist([]);
+        }
+      } else {
+        setWishlist([]);
+      }
+    };
+    fetchWishlist();
+  }, [user, getWishlist]);
+
   const filteredProducts = allProducts.filter(
     (product) => product.subCategory === selectedCategory
   );
 
+  const handleAddToCart = async (productId) => {
+    if (!user) {
+      toast.warn("Please login to add items to your cart!");
+      return;
+    }
+    await addToCart(productId);
+    toast.success("Added to cart 🛒");
+  };
+
+  const handleWishlistToggle = async (productId) => {
+    if (!user) {
+      toast.warn("Please login to manage your wishlist!");
+      return;
+    }
+
+    try {
+      const res = await toggleWishlist(productId);
+      if (res?.message?.includes("Added")) {
+        toast.success("Added to wishlist ❤️");
+        setWishlist([...wishlist, productId]);
+      } else if (res?.message?.includes("Removed")) {
+        toast.info("Removed from wishlist 💔");
+        setWishlist(wishlist.filter((id) => id !== productId));
+      } else {
+        if (wishlist.includes(productId)) {
+          setWishlist(wishlist.filter((id) => id !== productId));
+          toast.info("Removed from wishlist 💔");
+        } else {
+          setWishlist([...wishlist, productId]);
+          toast.success("Added to wishlist ❤️");
+        }
+      }
+    } catch (error) {
+      console.error("Wishlist toggle error:", error);
+      toast.error("Error updating wishlist!");
+    }
+  };
+
+  const handleViewProduct = (productId) => {
+    navigate(`/detail/${productId}`);
+  };
+
+  const handleCategoryChange = (categoryName) => {
+    setSelectedCategory(categoryName);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-      {/* Header */}
-      <div className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between gap-8">
-            <div className="relative flex-1 max-w-2xl">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search for kids' fashion..."
-                className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
-              />
+    <div className="min-h-screen bg-gray-50">
+      {/* 🌟 Modern Hero Section */}
+      <div className="relative bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 text-white overflow-hidden w-full">
+        <div className="relative w-full px-6 py-12">
+          {/* Premium Badge */}
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl">
+              <span className="text-sm font-bold tracking-widest bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
+                ELITE COLLECTION 2025
+              </span>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 whitespace-nowrap">
-              Kids' Collection
-            </h1>
+          </div>
+
+          {/* Hero Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full max-w-7xl mx-auto">
+            {/* Left Side - Text Content */}
+            <div className="text-left w-full space-y-6">
+              <div className="space-y-4">
+                <h1 className="text-5xl lg:text-6xl font-black leading-tight">
+                  <span className="block text-white">REDEFINE YOUR</span>
+                  <span className="block bg-gradient-to-r from-cyan-300 via-white to-blue-300 bg-clip-text text-transparent">
+                    PREMIUM STYLE
+                  </span>
+                </h1>
+                
+                <div className="w-20 h-1 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full"></div>
+                
+                <p className="text-blue-100/90 text-lg font-light leading-relaxed max-w-lg">
+                  Experience the pinnacle of kids' fashion with our exclusive
+                  2025 collection. Meticulously crafted pieces that blend
+                  Italian craftsmanship with contemporary design.
+                </p>
+              </div>
+
+              {/* Features */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-blue-100 font-medium">
+                    Premium Italian fabrics & sustainable materials
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-blue-100 font-medium">
+                    Expert tailoring with perfect fit guarantee
+                  </span>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="flex gap-8 pt-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">400+</div>
+                  <div className="text-blue-200 text-sm font-medium">Elite Pieces</div>
+                </div>
+                <div className="h-8 w-0.5 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full"></div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">40+</div>
+                  <div className="text-blue-200 text-sm font-medium">Luxury Brands</div>
+                </div>
+                <div className="h-8 w-0.5 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full"></div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">24/7</div>
+                  <div className="text-blue-200 text-sm font-medium">Style Concierge</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Product Showcase */}
+            <div className="w-full relative">
+              <div className="relative">
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/20 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-lg">
+                  <img
+                    src="https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                    alt="Premium Kids Fashion"
+                    className="w-full h-[420px] object-cover"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent"></div>
+
+                  <div className="absolute top-4 right-4">
+                    <div className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 px-3 py-1.5 rounded-full shadow-lg">
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                      <span className="text-white text-xs font-bold tracking-wide">IN STOCK</span>
+                    </div>
+                  </div>
+
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-2xl">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="text-white font-bold text-xl mb-1">Signature Kids Outfit</h3>
+                          <p className="text-blue-200/90 text-sm">Premium Cotton Blend</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-white font-bold text-xl">$199</div>
+                          <div className="text-blue-300/80 text-sm line-through">$299</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        <div className="flex gap-10">
-          {/* Left Sidebar - Categories */}
-          <div className="w-72 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-sm p-8 sticky top-28">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Categories</h2>
-                <div className="h-1 w-12 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full"></div>
-              </div>
-              <div className="space-y-4">
-                {categories.map((category) => (
+      {/* Category Filter Section - Below Hero */}
+      <div className="w-full bg-white border-b border-gray-200 py-4">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Filter className="w-5 h-5 text-blue-600" />
+              <h3 className="font-bold text-gray-900 text-lg">Categories</h3>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => {
+                const isSelected = selectedCategory === cat.name;
+                return (
                   <label
-                    key={category.id}
-                    className={`flex items-center justify-between cursor-pointer group py-2 px-3 rounded-lg transition-all ${
-                      selectedCategory === category.name
-                        ? "bg-blue-100"
-                        : "hover:bg-gray-50"
+                    key={cat.id}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer border ${
+                      isSelected
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
-                    <div className="flex items-center flex-1">
-                      <input
-                        type="radio"
-                        name="subcategory"
-                        checked={selectedCategory === category.name}
-                        onChange={() => setSelectedCategory(category.name)}
-                        className="w-5 h-5 text-blue-500 border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all"
-                      />
-                      <span
-                        className={`ml-4 text-base font-medium ${
-                          selectedCategory === category.name
-                            ? "text-blue-600"
-                            : "text-gray-700"
-                        }`}
-                      >
-                        {category.name}
-                      </span>
+                    <input
+                      type="radio"
+                      name="category"
+                      checked={isSelected}
+                      onChange={() => handleCategoryChange(cat.name)}
+                      className="hidden"
+                    />
+                    <div
+                      className={`w-4 h-4 rounded border flex items-center justify-center ${
+                        isSelected
+                          ? "border-white bg-white"
+                          : "border-gray-400"
+                      }`}
+                    >
+                      {isSelected && (
+                        <div className="w-2 h-2 bg-blue-600 rounded-sm"></div>
+                      )}
                     </div>
+                    <span className="font-medium text-sm whitespace-nowrap">
+                      {cat.name}
+                    </span>
                   </label>
-                ))}
-              </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Products Section - Full Width */}
+      <div className="w-full p-0">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          {/* Header Section */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl font-black text-gray-900 mb-2">
+                {selectedCategory} Collection
+              </h1>
+              <p className="text-gray-600">
+                Discover our premium {selectedCategory.toLowerCase()} selection
+              </p>
+            </div>
+            
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg">
+              <span className="font-bold text-sm">{filteredProducts.length} Products</span>
             </div>
           </div>
 
-          {/* Right Side - Products Grid */}
-          <div className="flex-1">
-            {loading ? (
-              <p className="text-center text-gray-500 text-lg mt-20">
-                Loading products...
-              </p>
-            ) : filteredProducts.length === 0 ? (
-              <p className="text-center text-gray-500 text-lg mt-20">
+          {/* Loading State */}
+          {loading ? (
+            <div className="flex justify-center items-center py-32">
+              <div className="text-center">
+                <div className="inline-block relative">
+                  <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                  <Zap className="w-8 h-8 text-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                </div>
+                <p className="text-gray-600 font-semibold mt-6 text-lg">
+                  Loading premium products...
+                </p>
+              </div>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-32">
+              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-50 mb-6">
+                <ShoppingBag className="w-12 h-12 text-blue-600" />
+              </div>
+              <p className="text-gray-600 text-2xl font-semibold">
                 No products found in "{selectedCategory}"
               </p>
-            ) : (
-              <>
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                      Showing Results
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {filteredProducts.length} {selectedCategory}
-                    </p>
-                  </div>
-                  <select className="bg-white border-2 border-gray-200 rounded-xl px-5 py-3 text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer hover:border-gray-300 transition-all">
-                    <option>Featured</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                    <option>Newest First</option>
-                    <option>Best Selling</option>
-                  </select>
-                </div>
+              <p className="text-gray-400 mt-3 text-lg">
+                Try selecting another category
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {filteredProducts.map((product) => {
+                const isWishlisted = wishlist.includes(product._id);
+                return (
+                  <div
+                    key={product._id}
+                    className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 h-[420px] flex flex-col"
+                  >
+                    
+                    {/* Product Image - Increased Height */}
+                    <div className="relative h-64 bg-gray-100 overflow-hidden flex-shrink-0">
+                      <img
+                        src={
+                          product.image
+                            ? `${BASE_URL}/uploads/${product.image}`
+                            : "https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=400&h=400&fit=crop"
+                        }
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {filteredProducts.map((product) => (
-                    <div
-                      key={product._id}
-                      className="group cursor-pointer"
-                      onMouseEnter={() => setHoveredProduct(product._id)}
-                      onMouseLeave={() => setHoveredProduct(null)}
-                    >
-                      <div className="relative overflow-hidden rounded-2xl bg-gray-100 mb-4 aspect-square shadow-md hover:shadow-xl transition-shadow duration-300">
-                        <img
-                          src={
-                            product.image
-                              ? `${BASE_URL}/uploads/${product.image}`
-                              : "https://via.placeholder.com/300x300.png?text=No+Image"
-                          }
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div
-                          className={`absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-6`}
+                      {/* Action Buttons */}
+                      <div className="absolute top-3 right-3 flex flex-col gap-2">
+                        <button
+                          onClick={() => handleWishlistToggle(product._id)}
+                          className={`p-2 rounded-full backdrop-blur-md transition-all duration-300 shadow-lg ${
+                            isWishlisted
+                              ? "bg-red-500 text-white hover:bg-red-600"
+                              : "bg-white text-gray-700 hover:bg-gray-50"
+                          }`}
                         >
-                          <button className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold transform translate-y-8 group-hover:translate-y-0 transition-transform duration-300 shadow-lg hover:bg-blue-600 hover:text-white mb-3 flex items-center gap-2">
-                            <ShoppingBag className="w-5 h-5" />
-                            Add to Cart
-                          </button>
-                        </div>
-                        <button className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110">
-                          <Heart className="w-5 h-5 text-blue-500" />
+                          <Heart
+                            className={`w-4 h-4 ${
+                              isWishlisted ? "fill-white" : ""
+                            }`}
+                          />
                         </button>
-                        <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
-                          NEW
-                        </div>
+                        <button
+                          onClick={() => handleViewProduct(product._id)}
+                          className="p-2 rounded-full bg-white text-gray-700 shadow-lg hover:bg-gray-50 transition-all duration-300"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
                       </div>
-                      <div className="px-1">
-                        <h3 className="font-semibold text-gray-900 mb-2 text-lg group-hover:text-blue-600 transition">
-                          {product.name}
-                        </h3>
-                        <p className="text-2xl font-bold text-gray-900">
-                          Rs. {product.price?.toLocaleString()}
-                        </p>
+
+                      {/* Premium Badge */}
+                      <div className="absolute top-3 left-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-lg">
+                        Premium
                       </div>
                     </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
+
+                    {/* Product Info */}
+                    <div className="p-4 flex flex-col flex-1 justify-between">
+                      <h3 className="font-bold text-gray-900 text-base mb-3 line-clamp-2 leading-tight">
+                        {product.name}
+                      </h3>
+
+                      {/* Price & Add to Cart */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xl font-black text-blue-900">
+                            Rs. {product.price?.toLocaleString()}
+                          </p>
+                          <p className="text-green-600 text-sm font-semibold flex items-center gap-1 mt-1">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            In Stock
+                          </p>
+                        </div>
+                        
+                        <button
+                          onClick={() => handleAddToCart(product._id)}
+                          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2"
+                        >
+                          <ShoppingBag className="w-4 h-4" />
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div> 
+          )}
         </div>
       </div>
     </div>
