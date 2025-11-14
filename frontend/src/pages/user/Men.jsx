@@ -437,10 +437,10 @@ const Men = () => {
                           <p className="text-xl font-black text-blue-900">
                             Rs. {product.price?.toLocaleString()}
                           </p>
-                          <p className="text-green-600 text-sm font-semibold flex items-center gap-1 mt-1">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            In Stock
-                          </p>
+                          <div className="text-green-600 text-sm font-semibold flex items-center gap-1 mt-1">
+                            <span className="inline-flex w-2 h-2 bg-green-500 rounded-full"></span>
+                            <span>In Stock</span>
+                          </div>
                         </div>
                         
                         <button

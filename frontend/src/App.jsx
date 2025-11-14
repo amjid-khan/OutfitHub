@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import { ToastContainer } from "react-toastify"; // 🔹 Import Toastify
-import "react-toastify/dist/ReactToastify.css"; // 🔹 Import Toastify CSS
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
@@ -16,52 +16,53 @@ import Wishlist from "./pages/user/Wishlist";
 import Cart from "./pages/user/Cart";
 import Products from "./pages/admin/components/Products";
 import DetailPage from "./pages/user/DetailPage";
+import Checkout from "./pages/user/Checkout";
+// import OrderSuccess from "./pages/user/OrderSuccess"; // 🔹 Add Order Success Page
 
 function App() {
   return (
     <AuthProvider>
-      <>
-        {/* 🔹 Toastify Container — placed globally */}
-        <ToastContainer
-          position="top-center"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          pauseOnHover
-          theme="light"
-        />
+        <>
+          {/* 🔹 Toastify Container — placed globally */}
+          <ToastContainer
+            position="top-center"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            pauseOnHover
+            theme="light"
+          />
 
-        <Routes>
-          <Route path="/" element={<UserLayout />}>
-            <Route index element={<Home />} />
-            <Route path="/men" element={<Men />} />
-            <Route path="/women" element={<Women />} />
-            <Route path="/kids" element={<Kids />} />
-            <Route path="/sale" element={<Sale />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/detail/:id" element={<DetailPage />} />
+          <Routes>
+            <Route path="/" element={<UserLayout />}>
+              <Route index element={<Home />} />
+              <Route path="/men" element={<Men />} />
+              <Route path="/women" element={<Women />} />
+              <Route path="/kids" element={<Kids />} />
+              <Route path="/sale" element={<Sale />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/detail/:id" element={<DetailPage />} />
+              <Route path="/checkout" element={<Checkout />} />
+            </Route>
 
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="products" element={<Products />} />
+            </Route>
 
-          </Route>
-
-          <Route
-            path="/admin/*"
-            element={
-              <ProtectedRoute adminOnly>
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="products" element={<Products />} />
-          </Route>
-
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </>
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </>
     </AuthProvider>
   );
 }

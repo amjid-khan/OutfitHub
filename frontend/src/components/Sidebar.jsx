@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
-  ShoppingBag,
   Users,
   BarChart3,
   Settings,
@@ -28,12 +27,6 @@ const Sidebar = () => {
       path: "/admin/products",
       icon: Package,
       label: "Products",
-    },
-    {
-      path: "/admin/orders",
-      icon: ShoppingBag,
-      label: "Orders",
-      badge: "12",
     },
     {
       path: "/admin/customers",

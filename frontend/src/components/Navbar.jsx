@@ -5,7 +5,6 @@ import {
   X,
   LogOut,
   ShoppingCart,
-  Package,
   ChevronDown,
   Search,
   Heart,
@@ -151,14 +150,6 @@ const Navbar = () => {
                           {user.name}
                         </p>
                       </div>
-                      <Link
-                        to="/my-orders"
-                        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 transition text-gray-700 hover:text-gray-900 text-sm"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        <Package size={16} />
-                        <span>My Orders</span>
-                      </Link>
                       <button
                         onClick={() => {
                           logout();

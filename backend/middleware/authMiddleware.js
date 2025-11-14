@@ -1,27 +1,60 @@
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
-export const protect = async (req, res, next) => {
-    let token;
+// ✅ Named export use karein
+export const authMiddleware = async (req, res, next) => {
+    try {
+        const token = req.header("Authorization")?.replace("Bearer ", "");
 
-    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-        try {
-            token = req.headers.authorization.split(" ")[1];
-            console.log("Auth header received:", req.headers.authorization);
-
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            req.user = await User.findById(decoded.id).select("-password");
-            if (!req.user) {
-                return res.status(401).json({ message: "User not found" });
-            }
-
-            next();
-        } catch (error) {
-            console.error("Auth Middleware Error:", error.message);
-            return res.status(401).json({ message: "Not authorized, token failed" });
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                error: "No token, authorization denied",
+            });
         }
-    } else {
-        return res.status(401).json({ message: "Not authorized, no token" });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select("-password");
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                error: "Token is not valid",
+            });
+        }
+
+        req.user = user;
+        next();
+    } catch (error) {
+        console.error("Auth middleware error:", error);
+        res.status(401).json({
+            success: false,
+            error: "Token is not valid",
+        });
     }
 };
+
+// ✅ Admin middleware agar chahiye
+export const adminMiddleware = async (req, res, next) => {
+    try {
+        if (req.user && req.user.role === "admin") {
+            next();
+        } else {
+            res.status(403).json({
+                success: false,
+                error: "Access denied. Admin role required.",
+            });
+        }
+    } catch (error) {
+        console.error("Admin middleware error:", error);
+        res.status(500).json({
+            success: false,
+            error: "Server error in admin middleware",
+        });
+    }
+};
+
+// backward compatibility alias
+export const protect = authMiddleware;
+
+export default authMiddleware;
