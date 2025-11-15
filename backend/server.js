@@ -32,14 +32,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 
-// ✅ Health check route
-app.get("/api/health", (req, res) => {
-    res.json({
-        message: "Server is running successfully!",
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
-    });
-});
+
 
 // ✅ Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
